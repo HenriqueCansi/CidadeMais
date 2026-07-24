@@ -14,6 +14,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import obj.resolveu.R;
 import obj.resolveu.RvActivity;
 import obj.resolveu.RvView;
+import obj.resolveu.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 
 public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCallback
 {
@@ -71,7 +72,12 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 		});
 
 		ivProfile.setOnClickListener(v -> {
-			// Ação do perfil
+			if(frm_Perfil_pnlPrincipal.__obj == null)
+				frm_Perfil_pnlPrincipal.__obj = new frm_Perfil_pnlPrincipal();
+
+			frm_Perfil_pnlPrincipal.__obj.Show();
+			this.Hide();
+
 		});
 	}
 
