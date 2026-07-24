@@ -1,4 +1,4 @@
-package obj.resolveu.frm_Principal.Panel;
+package obj.cidademais.frm_Principal.Panel;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,10 +11,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
-import obj.resolveu.R;
-import obj.resolveu.RvActivity;
-import obj.resolveu.RvView;
-import obj.resolveu.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
+import obj.cidademais.R;
+import obj.cidademais.RvActivity;
+import obj.cidademais.RvView;
+import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 
 public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCallback
 {

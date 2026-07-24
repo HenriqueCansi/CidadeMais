@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "obj.resolveu"
+    namespace = "obj.cidademais"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "obj.resolveu"
+        applicationId = "obj.cidademais"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

@@ -1,4 +1,4 @@
-package obj.resolveu;
+package obj.cidademais;
 
 import android.os.Handler;
 import android.widget.LinearLayout;

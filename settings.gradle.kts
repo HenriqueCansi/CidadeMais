@@ -22,5 +22,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Resolveu"
+rootProject.name = "CidadeMais"
 include(":app")

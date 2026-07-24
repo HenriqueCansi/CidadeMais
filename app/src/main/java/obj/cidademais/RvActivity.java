@@ -1,4 +1,4 @@
-package obj.resolveu;
+package obj.cidademais;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import java.util.ArrayList;
 
-import obj.resolveu.frm_Login.Panel.frm_Login_pnlLogin;
-import obj.resolveu.frm_Principal.Panel.frm_Principal_pnlPrincipal;
+import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import com.google.firebase.FirebaseApp;
 
 public class RvActivity extends Activity

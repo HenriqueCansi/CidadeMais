@@ -1,11 +1,11 @@
-package obj.resolveu.frm_Login.Panel;
+package obj.cidademais.frm_Login.Panel;
 
 import android.widget.Button;
 
-import obj.resolveu.RvActivity;
-import obj.resolveu.RvView;
-import obj.resolveu.frm_Principal.Panel.frm_Principal_pnlPrincipal;
-import obj.resolveu.R;
+import obj.cidademais.RvActivity;
+import obj.cidademais.RvView;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
+import obj.cidademais.R;
 
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;

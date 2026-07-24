@@ -1,4 +1,4 @@
-package obj.resolveu.frm_Perfil_pnlPrincipal.Panel;
+package obj.cidademais.frm_Perfil_pnlPrincipal.Panel;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,9 +8,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import obj.resolveu.R;
-import obj.resolveu.RvActivity;
-import obj.resolveu.RvView;
+import obj.cidademais.R;
+import obj.cidademais.RvActivity;
+import obj.cidademais.RvView;
 
 public class frm_Perfil_pnlPrincipal extends RvView {
 

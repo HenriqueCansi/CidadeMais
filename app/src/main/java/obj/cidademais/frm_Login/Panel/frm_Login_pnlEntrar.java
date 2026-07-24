@@ -1,4 +1,4 @@
-package obj.resolveu.frm_Login.Panel;
+package obj.cidademais.frm_Login.Panel;
 
 import android.view.LayoutInflater;
 import android.widget.Button;
@@ -9,10 +9,10 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import obj.resolveu.R;
-import obj.resolveu.RvActivity;
-import obj.resolveu.RvView;
-import obj.resolveu.frm_Principal.Panel.frm_Principal_pnlPrincipal;
+import obj.cidademais.R;
+import obj.cidademais.RvActivity;
+import obj.cidademais.RvView;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Login_pnlEntrar extends RvView
 {

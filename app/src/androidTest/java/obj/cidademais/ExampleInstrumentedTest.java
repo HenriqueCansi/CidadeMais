@@ -1,4 +1,4 @@
-package obj.resolveu;
+package obj.cidademais;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("obj.resolveu", appContext.getPackageName());
+        assertEquals("obj.cidademais", appContext.getPackageName());
     }
 }
