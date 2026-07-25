@@ -11,6 +11,7 @@ playServicesMaps = "19.1.0"
 supportAnnotations = "28.0.0"
 firebaseCommon = "21.0.0"
 firebaseAuth = "23.2.0"
+firebaseFirestore = "26.4.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -24,6 +25,7 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 firebase-common = { group = "com.google.firebase", name = "firebase-common", version.ref = "firebaseCommon" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -10,11 +10,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
+import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Login.Data.Usuario;
 
 public class frm_Login_pnlCadastrar extends RvView
 {
@@ -67,9 +70,8 @@ public class frm_Login_pnlCadastrar extends RvView
 					.addOnCompleteListener(task -> {
 						if (task.isSuccessful())
 						{
-							Toast.makeText(RvActivity.__activity, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show();
-							frm_Login_pnlEntrar.__obj.Show();
-							this.Hide();
+							criaUsuario(nome, email);
+							return;
 						}
 						else
 						{
@@ -86,6 +88,55 @@ public class frm_Login_pnlCadastrar extends RvView
 
 		btnGoogleLogin.setOnClickListener(v -> {
 			Toast.makeText(RvActivity.__activity, "Login com Google ainda não implementado", Toast.LENGTH_SHORT).show();
+		});
+
+	}
+
+	public void criaUsuario(String paNome, String paEmail)
+	{
+
+		String uid = mAuth.getCurrentUser().getUid();
+
+		Usuario usuario = new Usuario();
+
+		usuario.uid = uid;
+		usuario.nome = paNome;
+		usuario.email = paEmail;
+
+		usuario.tipoUsuario = "USER";
+
+		usuario.reputacao = 0;
+		usuario.nivel = 1;
+
+		usuario.cidade = "";
+		usuario.fotoPerfil = "";
+
+		usuario.ativo = true;
+
+		usuario.criadoEm = Timestamp.now();
+		usuario.ultimoLogin = Timestamp.now();
+
+		FirebaseUsuario.salvar(usuario, new FirebaseUsuario.Callback()
+		{
+			@Override
+			public void onSucesso()
+			{
+				Toast.makeText(RvActivity.__activity,
+						"Cadastro realizado com sucesso!",
+						Toast.LENGTH_SHORT).show();
+
+				frm_Login_pnlEntrar.__obj.Show();
+				Hide();
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				Toast.makeText(RvActivity.__activity,
+						"Erro ao salvar usuário: " + e.getMessage(),
+						Toast.LENGTH_LONG).show();
+				return;
+			}
 		});
 
 	}

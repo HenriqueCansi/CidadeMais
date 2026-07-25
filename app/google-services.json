@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "838806707170",
-    "project_id": "resolveu-b2f53",
-    "storage_bucket": "resolveu-b2f53.firebasestorage.app"
+    "project_number": "151112082559",
+    "project_id": "cidademais-a7463",
+    "storage_bucket": "cidademais-a7463.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:838806707170:android:97288c441398065dfe37bb",
+        "mobilesdk_app_id": "1:151112082559:android:f7ffb4e863e9a749d9cb4a",
         "android_client_info": {
-          "package_name": "obj.resolveu"
+          "package_name": "obj.cidademais"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAArE80QQdXJURA1P3o1Ojp90nZ3PmFwIY"
+          "current_key": "AIzaSyAJl4_niY32JUgb5oiH7-qP71jNWa8Kx5Y"
         }
       ],
       "services": {
