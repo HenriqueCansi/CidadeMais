@@ -18,6 +18,7 @@ import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Usuario;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Login_pnlCadastrar extends RvView
 {
@@ -125,7 +126,8 @@ public class frm_Login_pnlCadastrar extends RvView
 						"Cadastro realizado com sucesso!",
 						Toast.LENGTH_SHORT).show();
 
-				frm_Login_pnlEntrar.__obj.Show();
+				frm_Principal_pnlPrincipal __obj = new frm_Principal_pnlPrincipal();
+				frm_Principal_pnlPrincipal.__obj.Show();
 				Hide();
 			}
 
