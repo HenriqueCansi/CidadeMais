@@ -17,6 +17,7 @@ import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
@@ -122,11 +123,15 @@ public class frm_Login_pnlCadastrar extends RvView
 			@Override
 			public void onSucesso()
 			{
+				Sessao.setUsuario(usuario);
+
 				Toast.makeText(RvActivity.__activity,
 						"Cadastro realizado com sucesso!",
 						Toast.LENGTH_SHORT).show();
 
-				frm_Principal_pnlPrincipal __obj = new frm_Principal_pnlPrincipal();
+				if (frm_Principal_pnlPrincipal.__obj == null)
+					frm_Principal_pnlPrincipal.__obj = new frm_Principal_pnlPrincipal();
+
 				frm_Principal_pnlPrincipal.__obj.Show();
 				Hide();
 			}

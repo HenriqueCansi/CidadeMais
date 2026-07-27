@@ -9,9 +9,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Login.Data.Sessao;
+import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Login_pnlEntrar extends RvView
@@ -53,21 +56,37 @@ public class frm_Login_pnlEntrar extends RvView
 
 			mAuth.signInWithEmailAndPassword(email, senha)
 					.addOnCompleteListener(task -> {
+
 						if (task.isSuccessful())
 						{
-							Toast.makeText(RvActivity.__activity, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+							String uid = mAuth.getCurrentUser().getUid();
 
-							if (frm_Principal_pnlPrincipal.__obj == null)
-								frm_Principal_pnlPrincipal.__obj = new frm_Principal_pnlPrincipal();
+							FirebaseUsuario.buscar(uid, new FirebaseUsuario.CallbackBusca()
+							{
+								@Override
+								public void onSucesso(Usuario usuario)
+								{
+									Sessao.setUsuario(usuario);
 
-							frm_Principal_pnlPrincipal.__obj.Show();
-							this.Hide();
+									Toast.makeText(RvActivity.__activity,
+											"Bem-vindo " + usuario.nome,
+											Toast.LENGTH_SHORT).show();
 
-						}
-						else
-						{
-							Toast.makeText(RvActivity.__activity, "Erro ao fazer login: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-							return;
+									if (frm_Principal_pnlPrincipal.__obj == null)
+										frm_Principal_pnlPrincipal.__obj = new frm_Principal_pnlPrincipal();
+
+									frm_Principal_pnlPrincipal.__obj.Show();
+									Hide();
+								}
+
+								@Override
+								public void onErro(Exception e)
+								{
+									Toast.makeText(RvActivity.__activity,
+											"Erro ao carregar usuário: " + e.getMessage(),
+											Toast.LENGTH_LONG).show();
+								}
+							});
 						}
 					});
 

@@ -35,4 +35,41 @@ public class FirebaseUsuario
 
 				});
 	}
+
+	public interface CallbackBusca
+	{
+		void onSucesso(Usuario usuario);
+
+		void onErro(Exception e);
+	}
+
+	public static void buscar(String uid, CallbackBusca callback)
+	{
+		db.collection("usuarios")
+				.document(uid)
+				.get()
+				.addOnSuccessListener(documentSnapshot -> {
+
+					if (documentSnapshot.exists())
+					{
+						Usuario usuario = documentSnapshot.toObject(Usuario.class);
+
+						if (callback != null)
+							callback.onSucesso(usuario);
+					}
+					else
+					{
+						if (callback != null)
+							callback.onErro(new Exception("Usuário não encontrado."));
+					}
+
+				})
+				.addOnFailureListener(e -> {
+
+					if (callback != null)
+						callback.onErro(e);
+
+				});
+	}
+
 }
