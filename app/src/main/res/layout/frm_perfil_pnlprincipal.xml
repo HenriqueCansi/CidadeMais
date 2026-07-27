@@ -128,7 +128,6 @@
 
             </LinearLayout>
 
-            <!-- Botões -->
             <Button
                     android:id="@+id/btnMeusPremios"
                     android:layout_width="match_parent"
@@ -145,6 +144,14 @@
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/bg_botao_roxo"
                     android:text="Meus problemas"
+                    android:textColor="@android:color/black" />
+            <Button
+                    android:id="@+id/btnSair"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_botao_vermelho"
+                    android:text="Sair"
                     android:textColor="@android:color/black" />
 
         </LinearLayout>

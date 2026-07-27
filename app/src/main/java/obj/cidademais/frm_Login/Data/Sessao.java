@@ -1,5 +1,7 @@
 package obj.cidademais.frm_Login.Data;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import obj.cidademais.frm_Login.Data.Usuario;
 
 public class Sessao
@@ -23,6 +25,13 @@ public class Sessao
 
 	public static void limpar()
 	{
+		usuario = null;
+	}
+
+	public static void logout()
+	{
+		FirebaseAuth.getInstance().signOut();
+
 		usuario = null;
 	}
 }

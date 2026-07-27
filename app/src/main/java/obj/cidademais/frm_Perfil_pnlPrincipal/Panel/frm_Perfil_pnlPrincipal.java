@@ -11,6 +11,8 @@ import android.widget.TextView;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Login.Data.Sessao;
+import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 
 public class frm_Perfil_pnlPrincipal extends RvView
 {
@@ -19,7 +21,7 @@ public class frm_Perfil_pnlPrincipal extends RvView
 	private LinearLayout layoutPerfil;
 	private ImageView imgPerfil;
 	private TextView tvTitulo, tvNome, tvCidade, tvPontos, tvPremios;
-	private Button btnMeusPremios, btnMeusProblemas;
+	private Button btnMeusPremios, btnMeusProblemas, btnSair;
 
 	private LinearLayout layout;
 
@@ -41,7 +43,7 @@ public class frm_Perfil_pnlPrincipal extends RvView
 		super.OnActivated();
 		if (layoutPerfil == null)
 		{
-			getLayout(); // força o layout a ser inflado
+			getLayout();
 		}
 		// Inicializa os componentes
 		imgPerfil = layoutPerfil.findViewById(R.id.imgPerfil);
@@ -52,21 +54,25 @@ public class frm_Perfil_pnlPrincipal extends RvView
 		tvPremios = layoutPerfil.findViewById(R.id.tvPremios);
 		btnMeusPremios = layoutPerfil.findViewById(R.id.btnMeusPremios);
 		btnMeusProblemas = layoutPerfil.findViewById(R.id.btnMeusProblemas);
+		btnSair = layoutPerfil.findViewById(R.id.btnSair);
 
-		// Exemplo: Preenche os dados (depois você pode puxar do Firebase ou SQLite)
 		tvNome.setText("Henrique Cansi");
 		tvCidade.setText("Caxias do Sul - RS");
 		tvPontos.setText("190");
 		tvPremios.setText("02");
 
-		// Clique nos botões
 		btnMeusPremios.setOnClickListener(v -> {
-			// Ex: abrir tela de prêmios
 		});
 
 		btnMeusProblemas.setOnClickListener(v -> {
-			// Ex: abrir tela de problemas
 		});
 
+		btnSair.setOnClickListener(v -> {
+
+			Sessao.logout();
+			frm_Login_pnlLogin.__obj.Show();
+			Hide();
+
+		});
 	}
 }

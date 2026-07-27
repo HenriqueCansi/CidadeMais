@@ -3,6 +3,7 @@ package obj.cidademais.frm_Login.Panel;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
+import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Login_pnlEntrar extends RvView
@@ -41,6 +43,7 @@ public class frm_Login_pnlEntrar extends RvView
 		EditText edtSenha = layout.findViewById(R.id.edtSenha);
 		Button btnEntrar = layout.findViewById(R.id.btnEntrar);
 		TextView txtNaoTenhoCadastro = layout.findViewById(R.id.tvCadastrarAgora);
+		ImageView ivVoltar = layout.findViewById(R.id.ivVoltar);
 
 		mAuth = FirebaseAuth.getInstance();
 
@@ -96,5 +99,14 @@ public class frm_Login_pnlEntrar extends RvView
 			frm_Login_pnlCadastrar.__obj.Show();
 			this.Hide();
 		});
+
+		ivVoltar.setOnClickListener(v -> {
+			if(frm_Login_pnlLogin.__obj == null)
+				frm_Login_pnlLogin.__obj = new frm_Login_pnlLogin();
+
+			frm_Login_pnlLogin.__obj.Show();
+			this.Hide();
+		});
+
 	}
 }

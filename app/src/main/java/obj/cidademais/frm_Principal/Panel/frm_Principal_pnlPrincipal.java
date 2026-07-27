@@ -77,7 +77,6 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 
 			frm_Perfil_pnlPrincipal.__obj.Show();
 			this.Hide();
-
 		});
 	}
 

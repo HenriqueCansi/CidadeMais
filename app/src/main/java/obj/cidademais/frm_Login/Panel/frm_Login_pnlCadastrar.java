@@ -5,10 +5,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +21,7 @@ import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
+import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Login_pnlCadastrar extends RvView
@@ -49,6 +52,8 @@ public class frm_Login_pnlCadastrar extends RvView
 		Button btnCadastrar = layout.findViewById(R.id.btnCadastrar);
 		TextView txtJaTenhoCadastro = layout.findViewById(R.id.txtJaTenhoCadastro);
 		ImageButton btnGoogleLogin = layout.findViewById(R.id.btnGoogleLogin);
+		ImageView ivVoltar = layout.findViewById(R.id.ivVoltar);
+
 		mAuth = FirebaseAuth.getInstance();
 
 		btnCadastrar.setOnClickListener(v -> {
@@ -92,6 +97,13 @@ public class frm_Login_pnlCadastrar extends RvView
 			Toast.makeText(RvActivity.__activity, "Login com Google ainda não implementado", Toast.LENGTH_SHORT).show();
 		});
 
+		ivVoltar.setOnClickListener(v -> {
+			if(frm_Login_pnlLogin.__obj == null)
+				frm_Login_pnlLogin.__obj = new frm_Login_pnlLogin();
+
+			frm_Login_pnlLogin.__obj.Show();
+			this.Hide();
+		});
 	}
 
 	public void criaUsuario(String paNome, String paEmail)
@@ -145,6 +157,7 @@ public class frm_Login_pnlCadastrar extends RvView
 				return;
 			}
 		});
+
 
 	}
 }
