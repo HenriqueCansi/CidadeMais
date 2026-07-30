@@ -12,6 +12,7 @@ import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Sessao;
+import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 
 public class frm_Perfil_pnlPrincipal extends RvView
@@ -74,5 +75,12 @@ public class frm_Perfil_pnlPrincipal extends RvView
 			Hide();
 
 		});
+	}
+	public void ShowCustom(){
+
+		Usuario usuario = Sessao.getUsuario();
+
+		tvNome.setText(usuario.nome);
+		tvCidade.setText(usuario.cidade);
 	}
 }

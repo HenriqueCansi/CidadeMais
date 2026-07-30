@@ -68,7 +68,13 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 		});
 
 		ivAdd.setOnClickListener(v -> {
-			// Ação do adicionar
+
+			if(frm_Principal_pnlOcorrencia.__obj == null)
+				frm_Principal_pnlOcorrencia.__obj = new frm_Principal_pnlOcorrencia();
+
+			frm_Principal_pnlOcorrencia.__obj.Show();
+			frm_Principal_pnlOcorrencia.__obj.ShowCustom();
+			this.Hide();
 		});
 
 		ivProfile.setOnClickListener(v -> {
@@ -76,6 +82,7 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 				frm_Perfil_pnlPrincipal.__obj = new frm_Perfil_pnlPrincipal();
 
 			frm_Perfil_pnlPrincipal.__obj.Show();
+			frm_Perfil_pnlPrincipal.__obj.ShowCustom();
 			this.Hide();
 		});
 	}
@@ -87,4 +94,6 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 		this.googleMap = map;
 		// Aqui você pode configurar o mapa (zoom, marcadores etc.)
 	}
+
+
 }
