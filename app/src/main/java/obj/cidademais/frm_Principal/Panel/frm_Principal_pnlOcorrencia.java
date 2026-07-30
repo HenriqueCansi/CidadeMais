@@ -7,14 +7,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import obj.cidademais.Core.Localizacao.CmGPS;
+import obj.cidademais.Core.Localizacao.CmPosicao;
+import obj.cidademais.Core.Localizacao.Localizacao;
+import obj.cidademais.Core.Localizacao.LocalizacaoManager;
+import obj.cidademais.Core.Localizacao.PermissaoManager;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
-import obj.cidademais.frm_Login.Panel.frm_Login_pnlCadastrar;
 
 public class frm_Principal_pnlOcorrencia extends RvView
 {
@@ -42,7 +45,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	private LinearLayout cardArvore;
 	private LinearLayout cardObra;
 	private LinearLayout cardOutros;
-
+	private CmPosicao posicaoAtual;
 	private String categoriaSelecionada = "";
 	@Override
 	public LinearLayout getLayout()
@@ -153,9 +156,40 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 	private void carregarLocalizacao()
 	{
+		if (!PermissaoManager.possuiPermissaoLocalizacao())
+		{
+			PermissaoManager.solicitarPermissaoLocalizacao();
 
+			txtEndereco.setText("Aguardando permissão...");
+			return;
+		}
+
+		txtEndereco.setText("Obtendo localização...");
+		txtCidade.setText("");
+
+		CmGPS.buscar(new CmGPS.Callback()
+		{
+			@Override
+			public void onSucesso(CmPosicao posicao)
+			{
+				posicaoAtual = posicao;
+
+				txtEndereco.setText(posicao.localizacao.endereco);
+
+				txtCidade.setText(
+						posicao.localizacao.bairro + "\n" +
+								posicao.localizacao.cidade + " - " +
+								posicao.localizacao.estado);
+			}
+
+			@Override
+			public void onErro(String erro)
+			{
+				txtEndereco.setText("Não foi possível localizar.");
+				txtCidade.setText(erro);
+			}
+		});
 	}
-
 	private void cadastrarOcorrencia(String titulo, String descricaoa)
 	{
 

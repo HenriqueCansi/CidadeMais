@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import com.google.firebase.FirebaseApp;
+import androidx.annotation.NonNull;
+
+import obj.cidademais.Core.CmPermissao;
 
 public class RvActivity extends Activity
 {
@@ -96,5 +99,18 @@ public class RvActivity extends Activity
 		super.onLowMemory();
 		if (frm_Principal_pnlPrincipal.__obj.mapView != null)
 			frm_Principal_pnlPrincipal.__obj.mapView.onLowMemory();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+	{
+		super.onRequestPermissionsResult(
+				requestCode,
+				permissions,
+				grantResults);
+
+		CmPermissao.onRequestPermissionsResult(
+				requestCode,
+				grantResults);
 	}
 }

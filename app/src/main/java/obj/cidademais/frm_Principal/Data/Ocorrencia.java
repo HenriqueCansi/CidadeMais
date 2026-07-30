@@ -1,8 +1,9 @@
 package obj.cidademais.frm_Principal.Data;
-
 import com.google.firebase.Timestamp;
 
 import java.util.List;
+
+import obj.cidademais.Core.Localizacao.CmPosicao;
 
 public class Ocorrencia
 {
@@ -18,14 +19,10 @@ public class Ocorrencia
 
 	public String status;
 
-	public double latitude;
+	// Localização completa
+	public CmPosicao posicao;
 
-	public double longitude;
-
-	public String endereco;
-
-	public String cidade;
-
+	// Pode haver várias fotos
 	public List<String> fotos;
 
 	public int curtidas;
