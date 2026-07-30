@@ -24,7 +24,6 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	EditText edtTitulo;
 	EditText edtDescricao;
 
-	Spinner spCategoria;
 
 	ImageView imgPreview;
 
@@ -37,6 +36,14 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	Button btnReportar;
 
 	Button btnAlterarLocalizacao;
+	private LinearLayout cardBuraco;
+	private LinearLayout cardIluminacao;
+	private LinearLayout cardLixo;
+	private LinearLayout cardArvore;
+	private LinearLayout cardObra;
+	private LinearLayout cardOutros;
+
+	private String categoriaSelecionada = "";
 	@Override
 	public LinearLayout getLayout()
 	{
@@ -54,8 +61,6 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		 edtTitulo = layout.findViewById(R.id.edtTitulo);
 		 edtDescricao = layout.findViewById(R.id.edtDescricao);
 
-		 spCategoria = layout.findViewById(R.id.spCategoria);
-
 		 imgPreview = layout.findViewById(R.id.imgPreview);
 
 		 txtEndereco = layout.findViewById(R.id.txtEndereco);
@@ -67,8 +72,19 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		 btnReportar = layout.findViewById(R.id.btnReportar);
 
 		 btnAlterarLocalizacao = layout.findViewById(R.id.btnAlterarLocalizacao);
+		cardBuraco = layout.findViewById(R.id.cardBuraco);
+		cardIluminacao = layout.findViewById(R.id.cardIluminacao);
+		cardLixo = layout.findViewById(R.id.cardLixo);
+		cardArvore = layout.findViewById(R.id.cardArvore);
+		cardObra = layout.findViewById(R.id.cardObra);
+		cardOutros = layout.findViewById(R.id.cardOutros);
 
-		carregarCategorias();
+		cardBuraco.setOnClickListener(v -> selecionarCategoria(cardBuraco, "BURACO"));
+		cardIluminacao.setOnClickListener(v -> selecionarCategoria(cardIluminacao, "ILUMINACAO"));
+		cardLixo.setOnClickListener(v -> selecionarCategoria(cardLixo, "LIXO"));
+		cardArvore.setOnClickListener(v -> selecionarCategoria(cardArvore, "ARVORE"));
+		cardObra.setOnClickListener(v -> selecionarCategoria(cardObra, "OBRA"));
+		cardOutros.setOnClickListener(v -> selecionarCategoria(cardOutros, "OUTROS"));
 
 		carregarLocalizacao();
 
@@ -101,7 +117,6 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 			String titulo = edtTitulo.getText().toString().trim();
 			String descricao = edtDescricao.getText().toString().trim();
-			String categoria = spCategoria.getSelectedItem().toString();
 
 			if (titulo.isEmpty())
 			{
@@ -119,17 +134,21 @@ public class frm_Principal_pnlOcorrencia extends RvView
 				return;
 			}
 
+			if (categoriaSelecionada.isEmpty())
+			{
+				Toast.makeText(RvActivity.__activity,
+						"Selecione uma categoria.",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+			String categoria = categoriaSelecionada;
+
 			cadastrarOcorrencia(
 					titulo,
-					descricao,
-					categoria);
+					descricao);
 
 		});
-	}
-
-	private void carregarCategorias()
-	{
-
 	}
 
 	private void carregarLocalizacao()
@@ -137,8 +156,10 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 	}
 
-	private void cadastrarOcorrencia(String titulo, String descricao, String categoria)
+	private void cadastrarOcorrencia(String titulo, String descricaoa)
 	{
+
+
 
 	}
 
@@ -147,5 +168,30 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 	}
 
+	private void selecionarCategoria(LinearLayout selecionado, String categoria)
+	{
+		categoriaSelecionada = categoria;
+
+		cardBuraco.setBackgroundResource(R.drawable.bg_categoria);
+		cardIluminacao.setBackgroundResource(R.drawable.bg_categoria);
+		cardLixo.setBackgroundResource(R.drawable.bg_categoria);
+		cardArvore.setBackgroundResource(R.drawable.bg_categoria);
+		cardObra.setBackgroundResource(R.drawable.bg_categoria);
+		cardOutros.setBackgroundResource(R.drawable.bg_categoria);
+
+		cardBuraco.animate().scaleX(1f).scaleY(1f).setDuration(120);
+		cardIluminacao.animate().scaleX(1f).scaleY(1f).setDuration(120);
+		cardLixo.animate().scaleX(1f).scaleY(1f).setDuration(120);
+		cardArvore.animate().scaleX(1f).scaleY(1f).setDuration(120);
+		cardObra.animate().scaleX(1f).scaleY(1f).setDuration(120);
+		cardOutros.animate().scaleX(1f).scaleY(1f).setDuration(120);
+
+		selecionado.setBackgroundResource(R.drawable.bg_categoria_selecionada);
+
+		selecionado.animate()
+				.scaleX(1.06f)
+				.scaleY(1.06f)
+				.setDuration(120);
+	}
 
 }

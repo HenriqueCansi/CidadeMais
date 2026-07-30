@@ -89,10 +89,190 @@
                         android:textStyle="bold"
                         android:textColor="#444444"/>
 
-                <Spinner
-                        android:id="@+id/spCategoria"
+                <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical">
+
+                    <!-- Primeira linha -->
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <LinearLayout
+                                android:id="@+id/cardBuraco"
+                                android:layout_width="0dp"
+                                android:layout_height="90dp"
+                                android:layout_weight="1"
+                                android:layout_margin="4dp"
+                                android:background="@drawable/bg_categoria"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                            <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:src="@drawable/ic_buraco"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Buraco"
+                                    android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:id="@+id/cardIluminacao"
+                                android:layout_width="0dp"
+                                android:layout_height="90dp"
+                                android:layout_weight="1"
+                                android:layout_margin="4dp"
+                                android:background="@drawable/bg_categoria"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                            <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:src="@drawable/ic_iluminacao"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Iluminação"
+                                    android:textStyle="bold"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Segunda linha -->
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <LinearLayout
+                                android:id="@+id/cardLixo"
+                                android:layout_width="0dp"
+                                android:layout_height="90dp"
+                                android:layout_weight="1"
+                                android:layout_margin="4dp"
+                                android:background="@drawable/bg_categoria"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                            <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:src="@drawable/ic_lixo"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Lixo"
+                                    android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:id="@+id/cardArvore"
+                                android:layout_width="0dp"
+                                android:layout_height="90dp"
+                                android:layout_weight="1"
+                                android:layout_margin="4dp"
+                                android:background="@drawable/bg_categoria"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                            <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:src="@drawable/ic_arvore"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Árvore"
+                                    android:textStyle="bold"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Terceira linha -->
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <LinearLayout
+                                android:id="@+id/cardObra"
+                                android:layout_width="0dp"
+                                android:layout_height="90dp"
+                                android:layout_weight="1"
+                                android:layout_margin="4dp"
+                                android:background="@drawable/bg_categoria"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                            <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:src="@drawable/ic_obra"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Obra"
+                                    android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                                android:id="@+id/cardOutros"
+                                android:layout_width="0dp"
+                                android:layout_height="90dp"
+                                android:layout_weight="1"
+                                android:layout_margin="4dp"
+                                android:background="@drawable/bg_categoria"
+                                android:gravity="center"
+                                android:orientation="vertical"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                            <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:src="@drawable/ic_outros"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:text="Outros"
+                                    android:textStyle="bold"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -105,7 +285,7 @@
                 <ImageView
                         android:id="@+id/imgPreview"
                         android:layout_width="match_parent"
-                        android:layout_height="180dp"
+                        android:layout_height="140dp"
                         android:layout_marginTop="8dp"
                         android:background="#ECECEC"
                         android:padding="24dp"
