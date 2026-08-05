@@ -2,9 +2,12 @@ package obj.cidademais.Core;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
 
 import obj.cidademais.RvActivity;
 
@@ -49,22 +52,77 @@ public class CmPermissao
 			int requestCode,
 			int[] grantResults)
 	{
+		if (requestCode != REQUEST_PERMISSOES)
+			return;
+
 		if (callbackAtual == null)
 			return;
 
-		if (requestCode == REQUEST_LOCALIZACAO)
+		for (int resultado : grantResults)
 		{
-			if (grantResults.length > 0 &&
-					grantResults[0] == PackageManager.PERMISSION_GRANTED)
-			{
-				callbackAtual.onPermitido();
-			}
-			else
+			if (resultado != PackageManager.PERMISSION_GRANTED)
 			{
 				callbackAtual.onNegado();
+				callbackAtual = null;
+				return;
 			}
+		}
 
+		callbackAtual.onPermitido();
+		callbackAtual = null;
+	}
+
+	public static final int REQUEST_PERMISSOES = 103;
+
+	public static void solicitarPermissoes(Callback callback)
+	{
+		callbackAtual = callback;
+
+		ArrayList<String> permissoes = new ArrayList<>();
+
+		// Localização
+		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+			permissoes.add(Manifest.permission.ACCESS_FINE_LOCATION);
+		
+		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+			permissoes.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+		// Câmera
+		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+			permissoes.add(Manifest.permission.CAMERA);
+
+		// Galeria (Imagens e Vídeos)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+		{
+			if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED)
+				permissoes.add(Manifest.permission.READ_MEDIA_IMAGES);
+			
+			if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED)
+				permissoes.add(Manifest.permission.READ_MEDIA_VIDEO);
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+			{
+				if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) != PackageManager.PERMISSION_GRANTED)
+					permissoes.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED);
+			}
+		}
+		else
+		{
+			if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+				permissoes.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+		}
+
+		if (permissoes.isEmpty())
+		{
+			callback.onPermitido();
 			callbackAtual = null;
+		}
+		else
+		{
+			ActivityCompat.requestPermissions(
+					RvActivity.__activity,
+					permissoes.toArray(new String[0]),
+					REQUEST_PERMISSOES);
 		}
 	}
 }

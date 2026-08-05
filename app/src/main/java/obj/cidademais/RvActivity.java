@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import java.util.ArrayList;
 
+import obj.cidademais.Core.Localizacao.CmPosicao;
+import obj.cidademais.Core.Localizacao.LocalizacaoManager;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import com.google.firebase.FirebaseApp;
@@ -25,7 +27,38 @@ public class RvActivity extends Activity
 		super.onCreate(savedInstanceState);
 		FirebaseApp.initializeApp(this);
 		__activity = this;
-		frm_Login_pnlLogin.__obj.Show();
+
+		CmPermissao.solicitarPermissoes(new CmPermissao.Callback()
+		{
+			@Override
+			public void onPermitido()
+			{
+				LocalizacaoManager.buscar(new LocalizacaoManager.Callback()
+				{
+					@Override
+					public void onSucesso(CmPosicao posicao)
+					{
+						CmPosicao.posicaoAtual = posicao;
+					}
+
+					@Override
+					public void onErro(String erro)
+					{
+					}
+				});
+
+				frm_Login_pnlLogin.__obj.Show();
+			}
+
+			@Override
+			public void onNegado()
+			{
+				// Mesmo que negue algumas, vamos seguir para o login? 
+				// Ou o usuário quer que peça tudo de novo?
+				// Geralmente seguimos para o login, mas algumas funções podem falhar depois.
+				frm_Login_pnlLogin.__obj.Show();
+			}
+		});
 	}
 
 	public static LinearLayout criaTela(RvView view)
