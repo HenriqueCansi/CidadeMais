@@ -1,5 +1,6 @@
 package obj.cidademais.frm_Principal.Panel;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
 import android.view.LayoutInflater;
@@ -15,9 +16,13 @@ import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.Localizacao;
 import obj.cidademais.Core.Localizacao.LocalizacaoManager;
 import obj.cidademais.Core.Localizacao.PermissaoManager;
+import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Login.Classe.CallbackCadastro;
+import obj.cidademais.frm_Login.Data.Sessao;
+import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
 public class frm_Principal_pnlOcorrencia extends RvView
 {
@@ -190,11 +195,63 @@ public class frm_Principal_pnlOcorrencia extends RvView
 			}
 		});
 	}
-	private void cadastrarOcorrencia(String titulo, String descricaoa)
+	private void cadastrarOcorrencia(String titulo, String descricao)
 	{
+		Ocorrencia ocorrencia = new Ocorrencia();
 
+		ocorrencia.uidUsuario = Sessao.getUsuario().uid;
 
+		ocorrencia.titulo = titulo;
 
+		ocorrencia.descricao = descricao;
+
+		ocorrencia.categoria = categoriaSelecionada;
+
+		ocorrencia.status = "ABERTA";
+
+		ocorrencia.latitude = CmPosicao.posicaoAtual.latitude;
+
+		ocorrencia.longitude = CmPosicao.posicaoAtual.longitude;
+
+		ocorrencia.endereco = CmPosicao.posicaoAtual.localizacao.endereco;
+
+		ocorrencia.cidade = CmPosicao.posicaoAtual.localizacao.cidade;
+
+		ocorrencia.curtidas = 0;
+
+		ocorrencia.confirmacoes = 0;
+
+		ocorrencia.comentarios = 0;
+
+		ocorrencia.criadoEm = Timestamp.now();
+
+		ocorrencia.atualizadoEm = Timestamp.now();
+
+		FirebaseOcorrencia.cadastrar(
+				ocorrencia,
+				new CallbackCadastro()
+				{
+					@Override
+					public void onSucesso()
+					{
+						Toast.makeText(
+								RvActivity.__activity,
+								"Ocorrência cadastrada!",
+								Toast.LENGTH_SHORT).show();
+
+						frm_Principal_pnlPrincipal.__obj.Show();
+						Hide();
+					}
+
+					@Override
+					public void onErro(Exception e)
+					{
+						Toast.makeText(
+								RvActivity.__activity,
+								e.getMessage(),
+								Toast.LENGTH_LONG).show();
+					}
+				});
 	}
 
 	public void ShowCustom()

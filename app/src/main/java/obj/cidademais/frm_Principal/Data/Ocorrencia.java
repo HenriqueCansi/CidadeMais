@@ -34,4 +34,8 @@ public class Ocorrencia
 	public Timestamp criadoEm;
 
 	public Timestamp atualizadoEm;
+	public String cidade;
+	public String endereco;
+	public double longitude;
+	public double latitude;
 }
