@@ -1,16 +1,24 @@
 package obj.cidademais.frm_Principal.Panel;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 
+import obj.cidademais.Core.Localizacao.CmPosicao;
+import obj.cidademais.Core.Localizacao.PermissaoManager;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
@@ -88,11 +96,23 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 	}
 
 	// Método de retorno do mapa pronto
+	@SuppressLint("MissingPermission")
 	@Override
 	public void onMapReady(GoogleMap map)
 	{
 		this.googleMap = map;
-		// Aqui você pode configurar o mapa (zoom, marcadores etc.)
+		
+		if (PermissaoManager.possuiPermissaoLocalizacao() &&
+			ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+		{
+			this.googleMap.setMyLocationEnabled(true);
+		}
+
+		if (CmPosicao.posicaoAtual != null)
+		{
+			LatLng minhaPosicao = new LatLng(CmPosicao.posicaoAtual.latitude, CmPosicao.posicaoAtual.longitude);
+			this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(minhaPosicao, 15f));
+		}
 	}
 
 
