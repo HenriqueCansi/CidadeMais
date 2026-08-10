@@ -3,6 +3,8 @@ package obj.cidademais.frm_Principal.Panel;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.EditText;
@@ -15,14 +17,21 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
 
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.PermissaoManager;
+import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
+import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
 public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCallback
 {
@@ -113,7 +122,60 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			LatLng minhaPosicao = new LatLng(CmPosicao.posicaoAtual.latitude, CmPosicao.posicaoAtual.longitude);
 			this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(minhaPosicao, 15f));
 		}
+
+		carregarMarcadores();
 	}
 
+	private void carregarMarcadores()
+	{
+		FirebaseOcorrencia.listarTodas(new FirebaseOcorrencia.CallbackListagem()
+		{
+			@Override
+			public void onSucesso(List<Ocorrencia> lista)
+			{
+				googleMap.clear();
+
+				for (Ocorrencia ocorrencia : lista)
+				{
+					if (ocorrencia.latitude == 0 && ocorrencia.longitude == 0)
+						continue;
+
+					googleMap.addMarker(new MarkerOptions()
+							.position(new LatLng(ocorrencia.latitude, ocorrencia.longitude))
+							.title(ocorrencia.titulo)
+							.snippet(ocorrencia.categoria)
+							.icon(iconePorCategoria(ocorrencia.categoria)));
+				}
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+			}
+		});
+	}
+
+	private BitmapDescriptor iconePorCategoria(String categoria)
+	{
+		int resId;
+
+		if (categoria == null)
+			resId = R.drawable.ic_outros;
+		else
+			switch (categoria)
+			{
+				case "BURACO": resId = R.drawable.ic_buraco; break;
+				case "ILUMINACAO": resId = R.drawable.ic_iluminacao; break;
+				case "LIXO": resId = R.drawable.ic_lixo; break;
+				case "ARVORE": resId = R.drawable.ic_arvore; break;
+				case "OBRA": resId = R.drawable.ic_obra; break;
+				default: resId = R.drawable.ic_outros; break;
+			}
+
+		Bitmap original = BitmapFactory.decodeResource(RvActivity.__activity.getResources(), resId);
+		Bitmap escalado = Bitmap.createScaledBitmap(original, 96, 96, false);
+
+		return BitmapDescriptorFactory.fromBitmap(escalado);
+	}
 
 }

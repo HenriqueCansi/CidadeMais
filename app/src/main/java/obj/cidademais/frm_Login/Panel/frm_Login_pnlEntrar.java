@@ -91,6 +91,16 @@ public class frm_Login_pnlEntrar extends RvView
 								}
 							});
 						}
+						else
+						{
+							String mensagem = task.getException() != null
+									? task.getException().getMessage()
+									: "Não foi possível entrar.";
+
+							Toast.makeText(RvActivity.__activity,
+									"Erro ao entrar: " + mensagem,
+									Toast.LENGTH_LONG).show();
+						}
 					});
 
 		});

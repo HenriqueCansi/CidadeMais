@@ -1,9 +1,13 @@
 package obj.cidademais.frm_Login.Panel;
 
 import android.widget.Button;
+import android.widget.Toast;
 
+import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Login.Data.Sessao;
+import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import obj.cidademais.R;
 
@@ -39,8 +43,36 @@ public class frm_Login_pnlLogin extends RvView
 
 		if (mAuth.getCurrentUser() != null)
 		{
-			frm_Principal_pnlPrincipal.__obj.Show();
-			this.Hide();
+			if (Sessao.isLogado())
+			{
+				frm_Principal_pnlPrincipal.__obj.Show();
+				this.Hide();
+				return;
+			}
+
+			String uid = mAuth.getCurrentUser().getUid();
+
+			FirebaseUsuario.buscar(uid, new FirebaseUsuario.CallbackBusca()
+			{
+				@Override
+				public void onSucesso(Usuario usuario)
+				{
+					Sessao.setUsuario(usuario);
+
+					frm_Principal_pnlPrincipal.__obj.Show();
+					Hide();
+				}
+
+				@Override
+				public void onErro(Exception e)
+				{
+					Toast.makeText(RvActivity.__activity,
+							"Erro ao carregar usuário: " + e.getMessage(),
+							Toast.LENGTH_LONG).show();
+
+					mAuth.signOut();
+				}
+			});
 			return;
 		}
 

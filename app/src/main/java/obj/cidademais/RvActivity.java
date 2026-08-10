@@ -2,6 +2,7 @@ package obj.cidademais;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import com.google.firebase.FirebaseApp;
 import androidx.annotation.NonNull;
 
+import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmPermissao;
 
 public class RvActivity extends Activity
@@ -132,6 +134,14 @@ public class RvActivity extends Activity
 		super.onLowMemory();
 		if (frm_Principal_pnlPrincipal.__obj.mapView != null)
 			frm_Principal_pnlPrincipal.__obj.mapView.onLowMemory();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+
+		CmCamera.onActivityResult(requestCode, resultCode);
 	}
 
 	@Override

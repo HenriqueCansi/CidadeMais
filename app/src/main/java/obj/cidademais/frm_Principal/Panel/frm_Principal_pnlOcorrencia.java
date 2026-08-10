@@ -3,6 +3,11 @@ package obj.cidademais.frm_Principal.Panel;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import androidx.core.content.ContextCompat;
+
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,7 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import obj.cidademais.Core.Localizacao.CmGPS;
+import obj.cidademais.Core.CmCamera;
+import obj.cidademais.Core.CmPermissao;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.Localizacao;
 import obj.cidademais.Core.Localizacao.LocalizacaoManager;
@@ -22,6 +28,7 @@ import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Classe.CallbackCadastro;
 import obj.cidademais.frm_Login.Data.Sessao;
+import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
 public class frm_Principal_pnlOcorrencia extends RvView
@@ -52,6 +59,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	private LinearLayout cardOutros;
 	private CmPosicao posicaoAtual;
 	private String categoriaSelecionada = "";
+	private Uri fotoUri;
 	@Override
 	public LinearLayout getLayout()
 	{
@@ -96,14 +104,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 		carregarLocalizacao();
 
-		btnAdicionarImagem.setOnClickListener(v -> {
-
-			Toast.makeText(RvActivity.__activity,
-					"Selecionar imagem",
-					Toast.LENGTH_SHORT).show();
-
-			// Abrir câmera/galeria
-		});
+		btnAdicionarImagem.setOnClickListener(v -> abrirCamera());
 
 		btnAlterarLocalizacao.setOnClickListener(v -> {
 
@@ -122,6 +123,20 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		});
 
 		btnReportar.setOnClickListener(v -> {
+
+			if (!Sessao.isLogado())
+			{
+				Toast.makeText(RvActivity.__activity,
+						"Faça login para reportar uma ocorrência.",
+						Toast.LENGTH_LONG).show();
+
+				if (frm_Login_pnlLogin.__obj == null)
+					frm_Login_pnlLogin.__obj = new frm_Login_pnlLogin();
+
+				frm_Login_pnlLogin.__obj.Show();
+				Hide();
+				return;
+			}
 
 			String titulo = edtTitulo.getText().toString().trim();
 			String descricao = edtDescricao.getText().toString().trim();
@@ -150,12 +165,58 @@ public class frm_Principal_pnlOcorrencia extends RvView
 				return;
 			}
 
-			String categoria = categoriaSelecionada;
+			if (fotoUri == null)
+			{
+				Toast.makeText(RvActivity.__activity,
+						"Tire uma foto.",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
 
 			cadastrarOcorrencia(
 					titulo,
 					descricao);
 
+		});
+	}
+
+	private void abrirCamera()
+	{
+		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+		{
+			CmPermissao.solicitarPermissoes(new CmPermissao.Callback()
+			{
+				@Override
+				public void onPermitido()
+				{
+					abrirCamera();
+				}
+
+				@Override
+				public void onNegado()
+				{
+					Toast.makeText(RvActivity.__activity,
+							"Permissão de câmera negada.",
+							Toast.LENGTH_SHORT).show();
+				}
+			});
+			return;
+		}
+
+		CmCamera.tirarFoto(new CmCamera.Callback()
+		{
+			@Override
+			public void onSucesso(Uri uri)
+			{
+				fotoUri = uri;
+				imgPreview.setImageURI(uri);
+			}
+
+			@Override
+			public void onErro(String erro)
+			{
+				Toast.makeText(RvActivity.__activity, erro, Toast.LENGTH_SHORT).show();
+			}
 		});
 	}
 
@@ -172,12 +233,13 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		txtEndereco.setText("Obtendo localização...");
 		txtCidade.setText("");
 
-		CmGPS.buscar(new CmGPS.Callback()
+		LocalizacaoManager.buscar(new LocalizacaoManager.Callback()
 		{
 			@Override
 			public void onSucesso(CmPosicao posicao)
 			{
 				posicaoAtual = posicao;
+				CmPosicao.posicaoAtual = posicao;
 
 				txtEndereco.setText(posicao.localizacao.endereco);
 
@@ -227,8 +289,9 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 		ocorrencia.atualizadoEm = Timestamp.now();
 
-		FirebaseOcorrencia.cadastrar(
+		FirebaseOcorrencia.cadastrarComFoto(
 				ocorrencia,
+				fotoUri,
 				new CallbackCadastro()
 				{
 					@Override
