@@ -43,6 +43,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation ("androidx.security:security-crypto:1.1.0-alpha06")
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)

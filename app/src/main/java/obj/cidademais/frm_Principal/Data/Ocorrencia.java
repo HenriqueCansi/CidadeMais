@@ -27,6 +27,8 @@ public class Ocorrencia
 
 	public int curtidas;
 
+	public List<String> curtidoPor;
+
 	public int confirmacoes;
 
 	public int comentarios;
@@ -35,6 +37,7 @@ public class Ocorrencia
 
 	public Timestamp atualizadoEm;
 	public String cidade;
+	public String bairro;
 	public String endereco;
 	public double longitude;
 	public double latitude;

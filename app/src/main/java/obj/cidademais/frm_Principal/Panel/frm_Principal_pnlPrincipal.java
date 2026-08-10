@@ -36,6 +36,7 @@ import obj.cidademais.frm_Principal.Data.Ocorrencia;
 public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCallback
 {
 	public static frm_Principal_pnlPrincipal __obj = new frm_Principal_pnlPrincipal();
+	public static LatLng focoOcorrencia = null;
 	private LinearLayout layout;
 	private GoogleMap googleMap;
 	public MapView mapView;
@@ -67,6 +68,7 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 
 		EditText etSearch = layout.findViewById(R.id.etSearch);
 		ImageView ivNotification = layout.findViewById(R.id.ivNotification);
+		ImageView ivFeed = layout.findViewById(R.id.ivFeed);
 		ImageView ivMap = layout.findViewById(R.id.ivMap);
 		ImageView ivAdd = layout.findViewById(R.id.ivAdd);
 		ImageView ivProfile = layout.findViewById(R.id.ivProfile);
@@ -82,6 +84,14 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 
 		ivMap.setOnClickListener(v -> {
 			// Ação do mapa
+		});
+
+		ivFeed.setOnClickListener(v -> {
+			if (frm_Principal_pnlFeed.__obj == null)
+				frm_Principal_pnlFeed.__obj = new frm_Principal_pnlFeed();
+
+			frm_Principal_pnlFeed.__obj.Show();
+			this.Hide();
 		});
 
 		ivAdd.setOnClickListener(v -> {
@@ -117,7 +127,12 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			this.googleMap.setMyLocationEnabled(true);
 		}
 
-		if (CmPosicao.posicaoAtual != null)
+		if (focoOcorrencia != null)
+		{
+			this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(focoOcorrencia, 17f));
+			focoOcorrencia = null;
+		}
+		else if (CmPosicao.posicaoAtual != null)
 		{
 			LatLng minhaPosicao = new LatLng(CmPosicao.posicaoAtual.latitude, CmPosicao.posicaoAtual.longitude);
 			this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(minhaPosicao, 15f));

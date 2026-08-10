@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmPermissao;
 import obj.cidademais.Core.Localizacao.CmPosicao;
@@ -94,6 +96,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		cardArvore = layout.findViewById(R.id.cardArvore);
 		cardObra = layout.findViewById(R.id.cardObra);
 		cardOutros = layout.findViewById(R.id.cardOutros);
+
+		limparFormulario();
 
 		cardBuraco.setOnClickListener(v -> selecionarCategoria(cardBuraco, "BURACO"));
 		cardIluminacao.setOnClickListener(v -> selecionarCategoria(cardIluminacao, "ILUMINACAO"));
@@ -178,6 +182,37 @@ public class frm_Principal_pnlOcorrencia extends RvView
 					descricao);
 
 		});
+	}
+
+	private void limparFormulario()
+	{
+		edtTitulo.setText("");
+		edtDescricao.setText("");
+
+		imgPreview.setImageResource(R.drawable.ic_camera);
+		fotoUri = null;
+
+		categoriaSelecionada = "";
+
+		cardBuraco.setBackgroundResource(R.drawable.bg_categoria);
+		cardIluminacao.setBackgroundResource(R.drawable.bg_categoria);
+		cardLixo.setBackgroundResource(R.drawable.bg_categoria);
+		cardArvore.setBackgroundResource(R.drawable.bg_categoria);
+		cardObra.setBackgroundResource(R.drawable.bg_categoria);
+		cardOutros.setBackgroundResource(R.drawable.bg_categoria);
+
+		cardBuraco.setScaleX(1f);
+		cardBuraco.setScaleY(1f);
+		cardIluminacao.setScaleX(1f);
+		cardIluminacao.setScaleY(1f);
+		cardLixo.setScaleX(1f);
+		cardLixo.setScaleY(1f);
+		cardArvore.setScaleX(1f);
+		cardArvore.setScaleY(1f);
+		cardObra.setScaleX(1f);
+		cardObra.setScaleY(1f);
+		cardOutros.setScaleX(1f);
+		cardOutros.setScaleY(1f);
 	}
 
 	private void abrirCamera()
@@ -279,7 +314,11 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 		ocorrencia.cidade = CmPosicao.posicaoAtual.localizacao.cidade;
 
+		ocorrencia.bairro = CmPosicao.posicaoAtual.localizacao.bairro;
+
 		ocorrencia.curtidas = 0;
+
+		ocorrencia.curtidoPor = new ArrayList<>();
 
 		ocorrencia.confirmacoes = 0;
 

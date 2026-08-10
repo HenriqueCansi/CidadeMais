@@ -2,12 +2,15 @@ package obj.cidademais.Firebase.Ocorrencia;
 
 import android.net.Uri;
 
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import obj.cidademais.frm_Login.Classe.CallbackCadastro;
@@ -55,6 +58,26 @@ public class FirebaseOcorrencia
 
 								})
 								.addOnFailureListener(callback::onErro))
+				.addOnFailureListener(callback::onErro);
+	}
+
+	public static void alternarCurtida(
+			String ocorrenciaId,
+			String uid,
+			boolean curtir,
+			CallbackCadastro callback)
+	{
+		Map<String, Object> updates = new HashMap<>();
+
+		updates.put("curtidas", FieldValue.increment(curtir ? 1 : -1));
+		updates.put("curtidoPor", curtir ? FieldValue.arrayUnion(uid) : FieldValue.arrayRemove(uid));
+
+		FirebaseFirestore
+				.getInstance()
+				.collection("ocorrencias")
+				.document(ocorrenciaId)
+				.update(updates)
+				.addOnSuccessListener(unused -> callback.onSucesso())
 				.addOnFailureListener(callback::onErro);
 	}
 
