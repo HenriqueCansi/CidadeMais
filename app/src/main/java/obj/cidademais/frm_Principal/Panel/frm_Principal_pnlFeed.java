@@ -27,6 +27,7 @@ import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Usuario;
+import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
 public class frm_Principal_pnlFeed extends RvView
@@ -66,8 +67,35 @@ public class frm_Principal_pnlFeed extends RvView
 		llDestaques = layout.findViewById(R.id.llDestaques);
 		llRecentes = layout.findViewById(R.id.llRecentes);
 
+		ImageView ivMap = layout.findViewById(R.id.ivMap);
+		ImageView ivAdd = layout.findViewById(R.id.ivAdd);
+		ImageView ivProfile = layout.findViewById(R.id.ivProfile);
+
 		ivNotification.setOnClickListener(v -> {
 			// Ação da notificação
+		});
+
+		ivMap.setOnClickListener(v -> {
+			frm_Principal_pnlPrincipal.__obj.Show();
+			this.Hide();
+		});
+
+		ivAdd.setOnClickListener(v -> {
+			if (frm_Principal_pnlOcorrencia.__obj == null)
+				frm_Principal_pnlOcorrencia.__obj = new frm_Principal_pnlOcorrencia();
+
+			frm_Principal_pnlOcorrencia.__obj.Show();
+			frm_Principal_pnlOcorrencia.__obj.ShowCustom();
+			this.Hide();
+		});
+
+		ivProfile.setOnClickListener(v -> {
+			if (frm_Perfil_pnlPrincipal.__obj == null)
+				frm_Perfil_pnlPrincipal.__obj = new frm_Perfil_pnlPrincipal();
+
+			frm_Perfil_pnlPrincipal.__obj.Show();
+			frm_Perfil_pnlPrincipal.__obj.ShowCustom();
+			this.Hide();
 		});
 
 		raioKm = sbRaio.getProgress() + 1;

@@ -57,8 +57,19 @@ public class frm_Perfil_pnlPrincipal extends RvView
 		btnMeusProblemas = layoutPerfil.findViewById(R.id.btnMeusProblemas);
 		btnSair = layoutPerfil.findViewById(R.id.btnSair);
 
-		tvNome.setText("Henrique Cansi");
-		tvCidade.setText("Caxias do Sul - RS");
+		Usuario usuario = Sessao.getUsuario();
+
+		if (usuario != null)
+		{
+			tvNome.setText(usuario.nome);
+			tvCidade.setText(usuario.cidade);
+		}
+		else
+		{
+			tvNome.setText("Visitante");
+			tvCidade.setText("");
+		}
+
 		tvPontos.setText("190");
 		tvPremios.setText("02");
 
@@ -76,11 +87,7 @@ public class frm_Perfil_pnlPrincipal extends RvView
 
 		});
 	}
-	public void ShowCustom(){
-
-		Usuario usuario = Sessao.getUsuario();
-
-		tvNome.setText(usuario.nome);
-		tvCidade.setText(usuario.cidade);
+	public void ShowCustom()
+	{
 	}
 }
