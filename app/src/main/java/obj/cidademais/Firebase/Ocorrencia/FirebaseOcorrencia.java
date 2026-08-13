@@ -81,6 +81,40 @@ public class FirebaseOcorrencia
 				.addOnFailureListener(callback::onErro);
 	}
 
+	public static void alternarConfirmacao(
+			String ocorrenciaId,
+			String uid,
+			boolean confirmar,
+			CallbackCadastro callback)
+	{
+		Map<String, Object> updates = new HashMap<>();
+
+		updates.put("confirmacoes", FieldValue.increment(confirmar ? 1 : -1));
+		updates.put("confirmadoPor", confirmar ? FieldValue.arrayUnion(uid) : FieldValue.arrayRemove(uid));
+
+		FirebaseFirestore
+				.getInstance()
+				.collection("ocorrencias")
+				.document(ocorrenciaId)
+				.update(updates)
+				.addOnSuccessListener(unused -> callback.onSucesso())
+				.addOnFailureListener(callback::onErro);
+	}
+
+	public static void atualizarStatus(
+			String ocorrenciaId,
+			String novoStatus,
+			CallbackCadastro callback)
+	{
+		FirebaseFirestore
+				.getInstance()
+				.collection("ocorrencias")
+				.document(ocorrenciaId)
+				.update("status", novoStatus)
+				.addOnSuccessListener(unused -> callback.onSucesso())
+				.addOnFailureListener(callback::onErro);
+	}
+
 	public interface CallbackListagem
 	{
 		void onSucesso(List<Ocorrencia> lista);
@@ -93,6 +127,31 @@ public class FirebaseOcorrencia
 		FirebaseFirestore
 				.getInstance()
 				.collection("ocorrencias")
+				.get()
+				.addOnSuccessListener(querySnapshot -> {
+
+					List<Ocorrencia> lista = new ArrayList<>();
+
+					for (var documento : querySnapshot.getDocuments())
+					{
+						Ocorrencia ocorrencia = documento.toObject(Ocorrencia.class);
+
+						if (ocorrencia != null)
+							lista.add(ocorrencia);
+					}
+
+					callback.onSucesso(lista);
+
+				})
+				.addOnFailureListener(callback::onErro);
+	}
+
+	public static void listarPorUsuario(String uid, CallbackListagem callback)
+	{
+		FirebaseFirestore
+				.getInstance()
+				.collection("ocorrencias")
+				.whereEqualTo("uidUsuario", uid)
 				.get()
 				.addOnSuccessListener(querySnapshot -> {
 

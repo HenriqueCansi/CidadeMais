@@ -15,6 +15,7 @@ import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
+import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
@@ -117,7 +118,7 @@ public class frm_Login_pnlCadastrar extends RvView
 		usuario.nome = paNome;
 		usuario.email = paEmail;
 
-		usuario.tipoUsuario = "USER";
+		usuario.tipoUsuario = CmConstantes.TIPO_USUARIO_USER;
 
 		usuario.reputacao = 0;
 		usuario.nivel = 1;

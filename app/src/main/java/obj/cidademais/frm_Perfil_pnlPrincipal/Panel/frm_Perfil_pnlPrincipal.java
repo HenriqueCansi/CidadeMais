@@ -8,12 +8,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
+import obj.cidademais.Core.CmConstantes;
+import obj.cidademais.Core.CmReputacao;
+import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
+import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
+import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
 public class frm_Perfil_pnlPrincipal extends RvView
 {
@@ -63,20 +70,25 @@ public class frm_Perfil_pnlPrincipal extends RvView
 		{
 			tvNome.setText(usuario.nome);
 			tvCidade.setText(usuario.cidade);
+			carregarReputacao(usuario);
 		}
 		else
 		{
 			tvNome.setText("Visitante");
 			tvCidade.setText("");
+			tvPontos.setText("0");
+			tvPremios.setText("0");
 		}
-
-		tvPontos.setText("190");
-		tvPremios.setText("02");
 
 		btnMeusPremios.setOnClickListener(v -> {
 		});
 
 		btnMeusProblemas.setOnClickListener(v -> {
+			if (frm_Perfil_pnlMeusProblemas.__obj == null)
+				frm_Perfil_pnlMeusProblemas.__obj = new frm_Perfil_pnlMeusProblemas();
+
+			frm_Perfil_pnlMeusProblemas.__obj.Show();
+			Hide();
 		});
 
 		btnSair.setOnClickListener(v -> {
@@ -89,5 +101,45 @@ public class frm_Perfil_pnlPrincipal extends RvView
 	}
 	public void ShowCustom()
 	{
+	}
+
+	private void carregarReputacao(Usuario usuario)
+	{
+		FirebaseOcorrencia.listarPorUsuario(usuario.uid, new FirebaseOcorrencia.CallbackListagem()
+		{
+			@Override
+			public void onSucesso(List<Ocorrencia> lista)
+			{
+				int totalCurtidas = 0;
+				int totalConfirmacoes = 0;
+				int qtdResolvidas = 0;
+
+				for (Ocorrencia oc : lista)
+				{
+					totalCurtidas += oc.curtidas;
+					totalConfirmacoes += oc.confirmacoes;
+
+					if (CmConstantes.STATUS_RESOLVIDA.equals(oc.status))
+						qtdResolvidas++;
+				}
+
+				int reputacao = CmReputacao.calcularReputacao(lista.size(), totalCurtidas, totalConfirmacoes, qtdResolvidas);
+				int nivel = CmReputacao.calcularNivel(reputacao);
+
+				tvPontos.setText(String.valueOf(reputacao));
+				tvPremios.setText(String.valueOf(lista.size()));
+
+				usuario.reputacao = reputacao;
+				usuario.nivel = nivel;
+				FirebaseUsuario.salvar(usuario, null);
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				tvPontos.setText("0");
+				tvPremios.setText("0");
+			}
+		});
 	}
 }

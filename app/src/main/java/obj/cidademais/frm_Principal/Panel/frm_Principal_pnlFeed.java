@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmData;
+import obj.cidademais.Core.CmReputacao;
 import obj.cidademais.Core.Localizacao.CmGeo;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
@@ -179,7 +181,9 @@ public class frm_Principal_pnlFeed extends RvView
 	private void montarDestaques(List<Ocorrencia> filtradas)
 	{
 		List<Ocorrencia> ordenadas = new ArrayList<>(filtradas);
-		Collections.sort(ordenadas, (a, b) -> b.curtidas - a.curtidas);
+		Collections.sort(ordenadas, (a, b) ->
+				CmReputacao.pontuacaoEngajamento(b.curtidas, b.confirmacoes)
+						- CmReputacao.pontuacaoEngajamento(a.curtidas, a.confirmacoes));
 
 		llDestaques.removeAllViews();
 
@@ -237,12 +241,15 @@ public class frm_Principal_pnlFeed extends RvView
 		TextView tvNome = card.findViewById(R.id.tvNome);
 		TextView tvTempo = card.findViewById(R.id.tvTempo);
 		TextView tvBairro = card.findViewById(R.id.tvBairro);
+		TextView tvStatus = card.findViewById(R.id.tvStatus);
 		TextView tvTitulo = card.findViewById(R.id.tvTitulo);
 		ImageView imgFoto = card.findViewById(R.id.imgFoto);
 
 		tvNome.setText("...");
 		tvTempo.setText(CmData.tempoRelativo(oc.criadoEm));
 		tvBairro.setText(oc.bairro != null ? oc.bairro : "");
+		tvStatus.setText(CmConstantes.rotuloStatus(oc.status));
+		tvStatus.getBackground().mutate().setTint(CmConstantes.corStatus(oc.status));
 		tvTitulo.setText(oc.titulo);
 
 		if (oc.fotos != null && !oc.fotos.isEmpty())

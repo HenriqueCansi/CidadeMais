@@ -31,6 +31,8 @@ public class Ocorrencia
 
 	public int confirmacoes;
 
+	public List<String> confirmadoPor;
+
 	public int comentarios;
 
 	public Timestamp criadoEm;

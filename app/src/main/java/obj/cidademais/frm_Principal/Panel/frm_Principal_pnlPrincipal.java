@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
+import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.PermissaoManager;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
@@ -158,7 +159,7 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 					googleMap.addMarker(new MarkerOptions()
 							.position(new LatLng(ocorrencia.latitude, ocorrencia.longitude))
 							.title(ocorrencia.titulo)
-							.snippet(ocorrencia.categoria)
+							.snippet(CmConstantes.rotuloStatus(ocorrencia.status) + " • " + ocorrencia.categoria)
 							.icon(iconePorCategoria(ocorrencia.categoria)));
 				}
 			}

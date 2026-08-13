@@ -19,6 +19,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import obj.cidademais.Core.CmCamera;
+import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmPermissao;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.Localizacao;
@@ -304,7 +305,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 		ocorrencia.categoria = categoriaSelecionada;
 
-		ocorrencia.status = "ABERTA";
+		ocorrencia.status = CmConstantes.STATUS_ABERTA;
 
 		ocorrencia.latitude = CmPosicao.posicaoAtual.latitude;
 
@@ -321,6 +322,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		ocorrencia.curtidoPor = new ArrayList<>();
 
 		ocorrencia.confirmacoes = 0;
+
+		ocorrencia.confirmadoPor = new ArrayList<>();
 
 		ocorrencia.comentarios = 0;
 

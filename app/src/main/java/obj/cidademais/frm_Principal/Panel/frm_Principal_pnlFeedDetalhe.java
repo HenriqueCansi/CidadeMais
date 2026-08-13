@@ -2,6 +2,7 @@ package obj.cidademais.frm_Principal.Panel;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmData;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
@@ -35,15 +37,24 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 	private ImageView ivFechar;
 	private ImageView imgAvatar;
 	private ImageView ivCurtir;
+	private ImageView ivConfirmar;
 	private TextView tvNomePoster;
 	private TextView tvTempo;
 	private TextView tvTitulo;
+	private TextView tvStatus;
 	private TextView tvCategoria;
 	private TextView tvEnderecoBairro;
 	private TextView tvQtdImagens;
 	private TextView tvCurtidas;
+	private TextView tvConfirmacoes;
 	private LinearLayout llFotos;
 	private LinearLayout llCurtir;
+	private LinearLayout llConfirmar;
+	private LinearLayout llStatusAdmin;
+	private LinearLayout chipAberta;
+	private LinearLayout chipEmAnalise;
+	private LinearLayout chipEncaminhada;
+	private LinearLayout chipResolvida;
 	private Button btnVerNoMapa;
 
 	@Override
@@ -70,6 +81,7 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		tvNomePoster = layout.findViewById(R.id.tvNomePoster);
 		tvTempo = layout.findViewById(R.id.tvTempo);
 		tvTitulo = layout.findViewById(R.id.tvTitulo);
+		tvStatus = layout.findViewById(R.id.tvStatus);
 		tvCategoria = layout.findViewById(R.id.tvCategoria);
 		tvEnderecoBairro = layout.findViewById(R.id.tvEnderecoBairro);
 		tvQtdImagens = layout.findViewById(R.id.tvQtdImagens);
@@ -78,6 +90,14 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		llCurtir = layout.findViewById(R.id.llCurtir);
 		ivCurtir = layout.findViewById(R.id.ivCurtir);
 		tvCurtidas = layout.findViewById(R.id.tvCurtidas);
+		llConfirmar = layout.findViewById(R.id.llConfirmar);
+		ivConfirmar = layout.findViewById(R.id.ivConfirmar);
+		tvConfirmacoes = layout.findViewById(R.id.tvConfirmacoes);
+		llStatusAdmin = layout.findViewById(R.id.llStatusAdmin);
+		chipAberta = layout.findViewById(R.id.chipAberta);
+		chipEmAnalise = layout.findViewById(R.id.chipEmAnalise);
+		chipEncaminhada = layout.findViewById(R.id.chipEncaminhada);
+		chipResolvida = layout.findViewById(R.id.chipResolvida);
 
 		carregarDados();
 
@@ -95,6 +115,12 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		});
 
 		llCurtir.setOnClickListener(v -> alternarCurtida());
+		llConfirmar.setOnClickListener(v -> alternarConfirmacao());
+
+		chipAberta.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_ABERTA));
+		chipEmAnalise.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_EM_ANALISE));
+		chipEncaminhada.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_ENCAMINHADA));
+		chipResolvida.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_RESOLVIDA));
 	}
 
 	private void carregarDados()
@@ -103,6 +129,8 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			return;
 
 		tvTitulo.setText(ocorrenciaAtual.titulo);
+		tvStatus.setText(CmConstantes.rotuloStatus(ocorrenciaAtual.status));
+		tvStatus.getBackground().mutate().setTint(CmConstantes.corStatus(ocorrenciaAtual.status));
 		tvCategoria.setText(rotuloCategoria(ocorrenciaAtual.categoria));
 
 		String bairro = ocorrenciaAtual.bairro != null ? ocorrenciaAtual.bairro : "";
@@ -135,6 +163,13 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			}
 
 		atualizarBotaoCurtir();
+		atualizarBotaoConfirmar();
+
+		boolean admin = isAdmin();
+		llStatusAdmin.setVisibility(admin ? View.VISIBLE : View.GONE);
+
+		if (admin)
+			atualizarChipsStatus();
 
 		FirebaseUsuario.buscar(ocorrenciaAtual.uidUsuario, new FirebaseUsuario.CallbackBusca()
 		{
@@ -223,6 +258,125 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 				llCurtir.setEnabled(true);
 			}
 		});
+	}
+
+	private boolean isAdmin()
+	{
+		return Sessao.isLogado()
+				&& CmConstantes.TIPO_USUARIO_ADMIN.equals(Sessao.getUsuario().tipoUsuario);
+	}
+
+	private void atualizarBotaoConfirmar()
+	{
+		boolean jaConfirmou = Sessao.isLogado()
+				&& ocorrenciaAtual.confirmadoPor != null
+				&& ocorrenciaAtual.confirmadoPor.contains(Sessao.getUsuario().uid);
+
+		ivConfirmar.setColorFilter(Color.parseColor(jaConfirmou ? "#2E7D32" : "#CCCCCC"));
+		tvConfirmacoes.setText(ocorrenciaAtual.confirmacoes + " Confirmações");
+	}
+
+	private void alternarConfirmacao()
+	{
+		if (!Sessao.isLogado())
+		{
+			Toast.makeText(RvActivity.__activity,
+					"Faça login para confirmar uma ocorrência.",
+					Toast.LENGTH_LONG).show();
+
+			if (frm_Login_pnlLogin.__obj == null)
+				frm_Login_pnlLogin.__obj = new frm_Login_pnlLogin();
+
+			frm_Login_pnlLogin.__obj.Show();
+			this.Hide();
+			return;
+		}
+
+		String uid = Sessao.getUsuario().uid;
+		boolean jaConfirmou = ocorrenciaAtual.confirmadoPor != null && ocorrenciaAtual.confirmadoPor.contains(uid);
+		boolean confirmar = !jaConfirmou;
+
+		llConfirmar.setEnabled(false);
+
+		FirebaseOcorrencia.alternarConfirmacao(ocorrenciaAtual.id, uid, confirmar, new CallbackCadastro()
+		{
+			@Override
+			public void onSucesso()
+			{
+				if (ocorrenciaAtual.confirmadoPor == null)
+					ocorrenciaAtual.confirmadoPor = new ArrayList<>();
+
+				if (confirmar)
+				{
+					ocorrenciaAtual.confirmadoPor.add(uid);
+					ocorrenciaAtual.confirmacoes++;
+				}
+				else
+				{
+					ocorrenciaAtual.confirmadoPor.remove(uid);
+					ocorrenciaAtual.confirmacoes = Math.max(0, ocorrenciaAtual.confirmacoes - 1);
+				}
+
+				atualizarBotaoConfirmar();
+				llConfirmar.setEnabled(true);
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+				llConfirmar.setEnabled(true);
+			}
+		});
+	}
+
+	private void alterarStatus(String novoStatus)
+	{
+		if (!isAdmin())
+			return;
+
+		llStatusAdmin.setEnabled(false);
+
+		FirebaseOcorrencia.atualizarStatus(ocorrenciaAtual.id, novoStatus, new CallbackCadastro()
+		{
+			@Override
+			public void onSucesso()
+			{
+				ocorrenciaAtual.status = novoStatus;
+				tvStatus.setText(CmConstantes.rotuloStatus(novoStatus));
+				tvStatus.getBackground().mutate().setTint(CmConstantes.corStatus(novoStatus));
+				atualizarChipsStatus();
+				llStatusAdmin.setEnabled(true);
+
+				Toast.makeText(RvActivity.__activity, "Status atualizado.", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+				llStatusAdmin.setEnabled(true);
+			}
+		});
+	}
+
+	private void atualizarChipsStatus()
+	{
+		chipAberta.setBackgroundResource(R.drawable.bg_categoria);
+		chipEmAnalise.setBackgroundResource(R.drawable.bg_categoria);
+		chipEncaminhada.setBackgroundResource(R.drawable.bg_categoria);
+		chipResolvida.setBackgroundResource(R.drawable.bg_categoria);
+
+		String status = ocorrenciaAtual.status;
+
+		if (CmConstantes.STATUS_EM_ANALISE.equals(status))
+			chipEmAnalise.setBackgroundResource(R.drawable.bg_categoria_selecionada);
+		else if (CmConstantes.STATUS_ENCAMINHADA.equals(status))
+			chipEncaminhada.setBackgroundResource(R.drawable.bg_categoria_selecionada);
+		else if (CmConstantes.STATUS_RESOLVIDA.equals(status))
+			chipResolvida.setBackgroundResource(R.drawable.bg_categoria_selecionada);
+		else
+			chipAberta.setBackgroundResource(R.drawable.bg_categoria_selecionada);
 	}
 
 	private String rotuloCategoria(String categoria)
