@@ -14,6 +14,7 @@ import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
@@ -137,6 +138,9 @@ public class frm_Login_pnlCadastrar extends RvView
 			public void onSucesso()
 			{
 				Sessao.setUsuario(usuario);
+
+				FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
+						FirebaseUsuario.atualizarToken(usuario.uid, token, null));
 
 				Toast.makeText(RvActivity.__activity,
 						"Cadastro realizado com sucesso!",

@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 	private GoogleMap googleMap;
 	public MapView mapView;
 	private Bundle mapViewBundle;
+	private ListenerRegistration listenerOcorrencias;
 
 	@Override
 	public LinearLayout getLayout()
@@ -144,7 +146,10 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 
 	private void carregarMarcadores()
 	{
-		FirebaseOcorrencia.listarTodas(new FirebaseOcorrencia.CallbackListagem()
+		if (listenerOcorrencias != null)
+			return;
+
+		listenerOcorrencias = FirebaseOcorrencia.observarTodas(new FirebaseOcorrencia.CallbackListagem()
 		{
 			@Override
 			public void onSucesso(List<Ocorrencia> lista)
@@ -169,6 +174,16 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			{
 			}
 		});
+	}
+
+	@Override
+	public void OnDisabled()
+	{
+		if (listenerOcorrencias != null)
+		{
+			listenerOcorrencias.remove();
+			listenerOcorrencias = null;
+		}
 	}
 
 	private BitmapDescriptor iconePorCategoria(String categoria)

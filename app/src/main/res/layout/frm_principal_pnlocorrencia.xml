@@ -282,15 +282,19 @@
                         android:textStyle="bold"
                         android:textColor="#444444"/>
 
-                <ImageView
-                        android:id="@+id/imgPreview"
+                <HorizontalScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:background="#ECECEC"
-                        android:padding="24dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_camera"/>
+                        android:scrollbars="none">
+
+                    <LinearLayout
+                            android:id="@+id/llFotosPreview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"/>
+
+                </HorizontalScrollView>
 
                 <Button
                         android:id="@+id/btnAdicionarImagem"

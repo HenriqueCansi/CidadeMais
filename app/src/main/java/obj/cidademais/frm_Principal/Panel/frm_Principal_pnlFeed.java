@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +48,7 @@ public class frm_Principal_pnlFeed extends RvView
 	private List<Ocorrencia> todasOcorrencias = new ArrayList<>();
 	private Map<String, Usuario> cacheUsuarios = new HashMap<>();
 	private int raioKm = 1;
+	private ListenerRegistration listenerOcorrencias;
 
 	@Override
 	public LinearLayout getLayout()
@@ -129,7 +131,10 @@ public class frm_Principal_pnlFeed extends RvView
 
 	private void carregarOcorrencias()
 	{
-		FirebaseOcorrencia.listarTodas(new FirebaseOcorrencia.CallbackListagem()
+		if (listenerOcorrencias != null)
+			return;
+
+		listenerOcorrencias = FirebaseOcorrencia.observarTodas(new FirebaseOcorrencia.CallbackListagem()
 		{
 			@Override
 			public void onSucesso(List<Ocorrencia> lista)
@@ -144,6 +149,16 @@ public class frm_Principal_pnlFeed extends RvView
 				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 		});
+	}
+
+	@Override
+	public void OnDisabled()
+	{
+		if (listenerOcorrencias != null)
+		{
+			listenerOcorrencias.remove();
+			listenerOcorrencias = null;
+		}
 	}
 
 	private void reconstruirFeed()

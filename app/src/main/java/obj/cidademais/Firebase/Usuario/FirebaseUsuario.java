@@ -36,6 +36,25 @@ public class FirebaseUsuario
 				});
 	}
 
+	public static void atualizarToken(String uid, String token, Callback callback)
+	{
+		db.collection("usuarios")
+				.document(uid)
+				.update("fcmToken", token)
+				.addOnSuccessListener(unused -> {
+
+					if (callback != null)
+						callback.onSucesso();
+
+				})
+				.addOnFailureListener(e -> {
+
+					if (callback != null)
+						callback.onErro(e);
+
+				});
+	}
+
 	public interface CallbackBusca
 	{
 		void onSucesso(Usuario usuario);

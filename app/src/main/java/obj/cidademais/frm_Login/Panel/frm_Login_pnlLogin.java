@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class frm_Login_pnlLogin extends RvView
 {
@@ -58,6 +59,9 @@ public class frm_Login_pnlLogin extends RvView
 				public void onSucesso(Usuario usuario)
 				{
 					Sessao.setUsuario(usuario);
+
+					FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
+							FirebaseUsuario.atualizarToken(usuario.uid, token, null));
 
 					frm_Principal_pnlPrincipal.__obj.Show();
 					Hide();

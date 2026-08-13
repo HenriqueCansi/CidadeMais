@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
@@ -70,6 +71,9 @@ public class frm_Login_pnlEntrar extends RvView
 								public void onSucesso(Usuario usuario)
 								{
 									Sessao.setUsuario(usuario);
+
+									FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
+											FirebaseUsuario.atualizarToken(usuario.uid, token, null));
 
 									Toast.makeText(RvActivity.__activity,
 											"Bem-vindo " + usuario.nome,

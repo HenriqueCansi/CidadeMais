@@ -1,8 +1,11 @@
 package obj.cidademais;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import java.util.ArrayList;
@@ -29,6 +32,8 @@ public class RvActivity extends Activity
 		super.onCreate(savedInstanceState);
 		FirebaseApp.initializeApp(this);
 		__activity = this;
+
+		criarCanalNotificacao();
 
 		CmPermissao.solicitarPermissoes(new CmPermissao.Callback()
 		{
@@ -61,6 +66,19 @@ public class RvActivity extends Activity
 				frm_Login_pnlLogin.__obj.Show();
 			}
 		});
+	}
+
+	private void criarCanalNotificacao()
+	{
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+			return;
+
+		NotificationChannel canal = new NotificationChannel(
+				"ocorrencias_status",
+				"Atualizações de Ocorrências",
+				NotificationManager.IMPORTANCE_HIGH);
+
+		getSystemService(NotificationManager.class).createNotificationChannel(canal);
 	}
 
 	public static LinearLayout criaTela(RvView view)

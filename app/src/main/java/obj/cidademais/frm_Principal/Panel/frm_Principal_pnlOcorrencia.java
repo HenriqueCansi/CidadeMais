@@ -8,15 +8,18 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import androidx.core.content.ContextCompat;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmConstantes;
@@ -43,7 +46,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	EditText edtDescricao;
 
 
-	ImageView imgPreview;
+	LinearLayout llFotosPreview;
 
 	TextView txtEndereco;
 	TextView txtCidade;
@@ -62,7 +65,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	private LinearLayout cardOutros;
 	private CmPosicao posicaoAtual;
 	private String categoriaSelecionada = "";
-	private Uri fotoUri;
+	private static final int MAX_FOTOS = 5;
+	private final List<Uri> fotosSelecionadas = new ArrayList<>();
 	@Override
 	public LinearLayout getLayout()
 	{
@@ -80,7 +84,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		 edtTitulo = layout.findViewById(R.id.edtTitulo);
 		 edtDescricao = layout.findViewById(R.id.edtDescricao);
 
-		 imgPreview = layout.findViewById(R.id.imgPreview);
+		 llFotosPreview = layout.findViewById(R.id.llFotosPreview);
 
 		 txtEndereco = layout.findViewById(R.id.txtEndereco);
 		 txtCidade = layout.findViewById(R.id.txtCidade);
@@ -170,7 +174,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 				return;
 			}
 
-			if (fotoUri == null)
+			if (fotosSelecionadas.isEmpty())
 			{
 				Toast.makeText(RvActivity.__activity,
 						"Tire uma foto.",
@@ -190,8 +194,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		edtTitulo.setText("");
 		edtDescricao.setText("");
 
-		imgPreview.setImageResource(R.drawable.ic_camera);
-		fotoUri = null;
+		fotosSelecionadas.clear();
+		atualizarPreviewFotos();
 
 		categoriaSelecionada = "";
 
@@ -216,8 +220,63 @@ public class frm_Principal_pnlOcorrencia extends RvView
 		cardOutros.setScaleY(1f);
 	}
 
+	private void atualizarPreviewFotos()
+	{
+		llFotosPreview.removeAllViews();
+
+		for (Uri uri : fotosSelecionadas)
+		{
+			FrameLayout item = new FrameLayout(RvActivity.__activity);
+
+			LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(dpParaPx(90), dpParaPx(90));
+			itemParams.setMarginEnd(dpParaPx(8));
+			item.setLayoutParams(itemParams);
+
+			ImageView thumb = new ImageView(RvActivity.__activity);
+			thumb.setLayoutParams(new FrameLayout.LayoutParams(
+					FrameLayout.LayoutParams.MATCH_PARENT,
+					FrameLayout.LayoutParams.MATCH_PARENT));
+			thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			thumb.setImageURI(uri);
+			item.addView(thumb);
+
+			ImageView remover = new ImageView(RvActivity.__activity);
+			FrameLayout.LayoutParams removerParams = new FrameLayout.LayoutParams(dpParaPx(22), dpParaPx(22));
+			removerParams.gravity = Gravity.TOP | Gravity.END;
+			remover.setLayoutParams(removerParams);
+			remover.setImageResource(R.drawable.ic_fechar);
+			remover.setBackgroundColor(0xAAFFFFFF);
+			remover.setOnClickListener(v -> {
+				fotosSelecionadas.remove(uri);
+				atualizarPreviewFotos();
+			});
+			item.addView(remover);
+
+			llFotosPreview.addView(item);
+		}
+
+		btnAdicionarImagem.setEnabled(fotosSelecionadas.size() < MAX_FOTOS);
+		btnAdicionarImagem.setText(fotosSelecionadas.isEmpty()
+				? "Adicionar Foto"
+				: "Adicionar Foto (" + fotosSelecionadas.size() + "/" + MAX_FOTOS + ")");
+	}
+
+	private int dpParaPx(int dp)
+	{
+		float densidade = RvActivity.__activity.getResources().getDisplayMetrics().density;
+		return Math.round(dp * densidade);
+	}
+
 	private void abrirCamera()
 	{
+		if (fotosSelecionadas.size() >= MAX_FOTOS)
+		{
+			Toast.makeText(RvActivity.__activity,
+					"Máximo de " + MAX_FOTOS + " fotos.",
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+
 		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
 		{
 			CmPermissao.solicitarPermissoes(new CmPermissao.Callback()
@@ -244,8 +303,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 			@Override
 			public void onSucesso(Uri uri)
 			{
-				fotoUri = uri;
-				imgPreview.setImageURI(uri);
+				fotosSelecionadas.add(uri);
+				atualizarPreviewFotos();
 			}
 
 			@Override
@@ -331,9 +390,9 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 		ocorrencia.atualizadoEm = Timestamp.now();
 
-		FirebaseOcorrencia.cadastrarComFoto(
+		FirebaseOcorrencia.cadastrarComFotos(
 				ocorrencia,
-				fotoUri,
+				fotosSelecionadas,
 				new CallbackCadastro()
 				{
 					@Override

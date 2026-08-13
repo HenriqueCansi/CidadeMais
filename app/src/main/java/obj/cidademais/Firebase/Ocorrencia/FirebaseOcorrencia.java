@@ -2,12 +2,15 @@ package obj.cidademais.Firebase.Ocorrencia;
 
 import android.net.Uri;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,25 +42,44 @@ public class FirebaseOcorrencia
 				.addOnFailureListener(callback::onErro);
 	}
 
-	public static void cadastrarComFoto(
+	public static void cadastrarComFotos(
 			Ocorrencia ocorrencia,
-			Uri fotoUri,
+			List<Uri> fotos,
 			CallbackCadastro callback)
 	{
-		FirebaseStorage
-				.getInstance()
-				.getReference("ocorrencias/" + UUID.randomUUID() + ".jpg")
-				.putFile(fotoUri)
-				.addOnSuccessListener(taskSnapshot ->
-						taskSnapshot.getStorage().getDownloadUrl()
-								.addOnSuccessListener(url -> {
+		if (fotos == null || fotos.isEmpty())
+		{
+			cadastrar(ocorrencia, callback);
+			return;
+		}
 
-									ocorrencia.fotos = Collections.singletonList(url.toString());
+		List<Task<Uri>> uploads = new ArrayList<>();
 
-									cadastrar(ocorrencia, callback);
+		for (Uri foto : fotos)
+		{
+			StorageReference ref = FirebaseStorage
+					.getInstance()
+					.getReference("ocorrencias/" + UUID.randomUUID() + ".jpg");
 
-								})
-								.addOnFailureListener(callback::onErro))
+			Task<Uri> upload = ref.putFile(foto)
+					.continueWithTask(task -> ref.getDownloadUrl());
+
+			uploads.add(upload);
+		}
+
+		Tasks.whenAllSuccess(uploads)
+				.addOnSuccessListener(resultados -> {
+
+					List<String> urls = new ArrayList<>();
+
+					for (Object resultado : resultados)
+						urls.add(resultado.toString());
+
+					ocorrencia.fotos = urls;
+
+					cadastrar(ocorrencia, callback);
+
+				})
 				.addOnFailureListener(callback::onErro);
 	}
 
@@ -144,6 +166,34 @@ public class FirebaseOcorrencia
 
 				})
 				.addOnFailureListener(callback::onErro);
+	}
+
+	public static ListenerRegistration observarTodas(CallbackListagem callback)
+	{
+		return FirebaseFirestore
+				.getInstance()
+				.collection("ocorrencias")
+				.addSnapshotListener((querySnapshot, erro) -> {
+
+					if (erro != null)
+					{
+						callback.onErro(erro);
+						return;
+					}
+
+					List<Ocorrencia> lista = new ArrayList<>();
+
+					for (var documento : querySnapshot.getDocuments())
+					{
+						Ocorrencia ocorrencia = documento.toObject(Ocorrencia.class);
+
+						if (ocorrencia != null)
+							lista.add(ocorrencia);
+					}
+
+					callback.onSucesso(lista);
+
+				});
 	}
 
 	public static void listarPorUsuario(String uid, CallbackListagem callback)

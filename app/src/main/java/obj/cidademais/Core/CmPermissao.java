@@ -112,6 +112,13 @@ public class CmPermissao
 				permissoes.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 		}
 
+		// Notificações (Android 13+)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+		{
+			if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+				permissoes.add(Manifest.permission.POST_NOTIFICATIONS);
+		}
+
 		if (permissoes.isEmpty())
 		{
 			callback.onPermitido();
