@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmData;
+import obj.cidademais.Core.CmUi;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
@@ -156,6 +157,7 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 
 				iv.setLayoutParams(params);
 				iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+				CmUi.arredondar(iv, 16);
 
 				Glide.with(RvActivity.__activity).load(url).into(iv);
 

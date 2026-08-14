@@ -22,6 +22,7 @@ import java.util.Map;
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmData;
 import obj.cidademais.Core.CmReputacao;
+import obj.cidademais.Core.CmUi;
 import obj.cidademais.Core.Localizacao.CmGeo;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
@@ -227,6 +228,7 @@ public class frm_Principal_pnlFeed extends RvView
 	{
 		LayoutInflater inflater = LayoutInflater.from(RvActivity.__activity);
 		View card = inflater.inflate(R.layout.item_feed_destaque, llDestaques, false);
+		CmUi.arredondar(card, 16);
 
 		TextView tvRank = card.findViewById(R.id.tvRank);
 		ImageView imgFoto = card.findViewById(R.id.imgFoto);
@@ -251,6 +253,7 @@ public class frm_Principal_pnlFeed extends RvView
 	{
 		LayoutInflater inflater = LayoutInflater.from(RvActivity.__activity);
 		View card = inflater.inflate(R.layout.item_feed_recente, llRecentes, false);
+		CmUi.arredondar(card, 16);
 
 		ImageView imgAvatar = card.findViewById(R.id.imgAvatar);
 		TextView tvNome = card.findViewById(R.id.tvNome);
@@ -266,6 +269,8 @@ public class frm_Principal_pnlFeed extends RvView
 		tvStatus.setText(CmConstantes.rotuloStatus(oc.status));
 		tvStatus.getBackground().mutate().setTint(CmConstantes.corStatus(oc.status));
 		tvTitulo.setText(oc.titulo);
+
+		CmUi.arredondar(imgFoto, 16);
 
 		if (oc.fotos != null && !oc.fotos.isEmpty())
 			Glide.with(RvActivity.__activity).load(oc.fotos.get(0)).into(imgFoto);

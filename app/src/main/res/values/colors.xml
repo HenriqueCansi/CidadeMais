@@ -1,6 +1,6 @@
 <resources>
     <!-- Cores principais -->
-    <color name="yellow">#FFD600</color> <!-- Amarelo (Fundo da barra superior) -->
+    <color name="yellow">#FEE250</color> <!-- Amarelo (Fundo da barra superior) -->
     <color name="purple">#6200EE</color> <!-- Roxo (Título "MAPA") -->
     <color name="white">#FFFFFF</color> <!-- Branco (Fundo da barra inferior) -->
     <color name="black">#000000</color> <!-- Preto (Textos) -->

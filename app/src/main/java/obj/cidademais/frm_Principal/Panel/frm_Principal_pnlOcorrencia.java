@@ -24,6 +24,7 @@ import java.util.List;
 import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmPermissao;
+import obj.cidademais.Core.CmUi;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.Localizacao;
 import obj.cidademais.Core.Localizacao.LocalizacaoManager;
@@ -231,6 +232,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 			LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(dpParaPx(90), dpParaPx(90));
 			itemParams.setMarginEnd(dpParaPx(8));
 			item.setLayoutParams(itemParams);
+			CmUi.arredondar(item, 12);
 
 			ImageView thumb = new ImageView(RvActivity.__activity);
 			thumb.setLayoutParams(new FrameLayout.LayoutParams(
