@@ -19,12 +19,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmPermissao;
 import obj.cidademais.Core.CmUi;
+import obj.cidademais.Core.Localizacao.CmGeo;
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.Localizacao;
 import obj.cidademais.Core.Localizacao.LocalizacaoManager;
@@ -67,6 +69,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 	private CmPosicao posicaoAtual;
 	private String categoriaSelecionada = "";
 	private static final int MAX_FOTOS = 5;
+	private static final double RAIO_PROXIMIDADE_KM = 0.05;
+	private static final int LIMITE_OCORRENCIAS_PROXIMAS = 3;
 	private final List<Uri> fotosSelecionadas = new ArrayList<>();
 	@Override
 	public LinearLayout getLayout()
@@ -183,9 +187,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 				return;
 			}
 
-			cadastrarOcorrencia(
-					titulo,
-					descricao);
+			Ocorrencia novaOcorrencia = montarOcorrencia(titulo, descricao);
+			verificarOcorrenciasProximas(novaOcorrencia);
 
 		});
 	}
@@ -354,7 +357,7 @@ public class frm_Principal_pnlOcorrencia extends RvView
 			}
 		});
 	}
-	private void cadastrarOcorrencia(String titulo, String descricao)
+	private Ocorrencia montarOcorrencia(String titulo, String descricao)
 	{
 		Ocorrencia ocorrencia = new Ocorrencia();
 
@@ -392,6 +395,68 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 		ocorrencia.atualizadoEm = Timestamp.now();
 
+		return ocorrencia;
+	}
+
+	private void verificarOcorrenciasProximas(Ocorrencia novaOcorrencia)
+	{
+		FirebaseOcorrencia.listarTodas(new FirebaseOcorrencia.CallbackListagem()
+		{
+			@Override
+			public void onSucesso(List<Ocorrencia> lista)
+			{
+				List<Ocorrencia> proximas = new ArrayList<>();
+
+				for (Ocorrencia oc : lista)
+				{
+					if (!novaOcorrencia.categoria.equals(oc.categoria))
+						continue;
+
+					if (CmConstantes.STATUS_RESOLVIDA.equals(oc.status))
+						continue;
+
+					if (oc.latitude == 0 && oc.longitude == 0)
+						continue;
+
+					double distanciaKm = CmGeo.distanciaKm(
+							novaOcorrencia.latitude, novaOcorrencia.longitude,
+							oc.latitude, oc.longitude);
+
+					if (distanciaKm <= RAIO_PROXIMIDADE_KM)
+						proximas.add(oc);
+				}
+
+				Collections.sort(proximas, (a, b) -> Double.compare(
+						CmGeo.distanciaKm(novaOcorrencia.latitude, novaOcorrencia.longitude, a.latitude, a.longitude),
+						CmGeo.distanciaKm(novaOcorrencia.latitude, novaOcorrencia.longitude, b.latitude, b.longitude)));
+
+				if (proximas.size() > LIMITE_OCORRENCIAS_PROXIMAS)
+					proximas = proximas.subList(0, LIMITE_OCORRENCIAS_PROXIMAS);
+
+				if (proximas.isEmpty())
+				{
+					cadastrarOcorrencia(novaOcorrencia);
+					return;
+				}
+
+				if (frm_Principal_pnlOcorrenciaProxima.__obj == null)
+					frm_Principal_pnlOcorrenciaProxima.__obj = new frm_Principal_pnlOcorrenciaProxima();
+
+				frm_Principal_pnlOcorrenciaProxima.__obj.preparar(proximas, novaOcorrencia, new ArrayList<>(fotosSelecionadas));
+				frm_Principal_pnlOcorrenciaProxima.__obj.Show();
+				Hide();
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				cadastrarOcorrencia(novaOcorrencia);
+			}
+		});
+	}
+
+	private void cadastrarOcorrencia(Ocorrencia ocorrencia)
+	{
 		FirebaseOcorrencia.cadastrarComFotos(
 				ocorrencia,
 				fotosSelecionadas,

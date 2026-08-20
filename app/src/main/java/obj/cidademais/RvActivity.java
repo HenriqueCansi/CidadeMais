@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.LocalizacaoManager;
+import obj.cidademais.Core.Localizacao.PermissaoManager;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import com.google.firebase.FirebaseApp;
@@ -40,30 +41,37 @@ public class RvActivity extends Activity
 			@Override
 			public void onPermitido()
 			{
-				LocalizacaoManager.buscar(new LocalizacaoManager.Callback()
-				{
-					@Override
-					public void onSucesso(CmPosicao posicao)
-					{
-						CmPosicao.posicaoAtual = posicao;
-					}
-
-					@Override
-					public void onErro(String erro)
-					{
-					}
-				});
-
+				buscarLocalizacaoInicial();
 				frm_Login_pnlLogin.__obj.Show();
 			}
 
 			@Override
 			public void onNegado()
 			{
-				// Mesmo que negue algumas, vamos seguir para o login? 
-				// Ou o usuário quer que peça tudo de novo?
-				// Geralmente seguimos para o login, mas algumas funções podem falhar depois.
+				// Mesmo que negue outras (câmera, mídia, notificações), a localização
+				// tem permissão própria — buscamos independente do resultado das demais.
+				buscarLocalizacaoInicial();
 				frm_Login_pnlLogin.__obj.Show();
+			}
+		});
+	}
+
+	private void buscarLocalizacaoInicial()
+	{
+		if (!PermissaoManager.possuiPermissaoLocalizacao())
+			return;
+
+		LocalizacaoManager.buscar(new LocalizacaoManager.Callback()
+		{
+			@Override
+			public void onSucesso(CmPosicao posicao)
+			{
+				CmPosicao.posicaoAtual = posicao;
+			}
+
+			@Override
+			public void onErro(String erro)
+			{
 			}
 		});
 	}
