@@ -1,5 +1,7 @@
 package obj.cidademais.frm_Principal.Panel;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -49,7 +51,9 @@ public class frm_Principal_pnlFeed extends RvView
 	private List<Ocorrencia> todasOcorrencias = new ArrayList<>();
 	private Map<String, Usuario> cacheUsuarios = new HashMap<>();
 	private int raioKm = 1;
+	private String textoBusca = "";
 	private ListenerRegistration listenerOcorrencias;
+	private boolean buscaConfigurada = false;
 
 	@Override
 	public LinearLayout getLayout()
@@ -79,6 +83,26 @@ public class frm_Principal_pnlFeed extends RvView
 		ivNotification.setOnClickListener(v -> {
 			// Ação da notificação
 		});
+
+		if (!buscaConfigurada)
+		{
+			etSearch.addTextChangedListener(new TextWatcher()
+			{
+				@Override
+				public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+				@Override
+				public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+				@Override
+				public void afterTextChanged(Editable s)
+				{
+					textoBusca = s.toString().trim().toLowerCase();
+					reconstruirFeed();
+				}
+			});
+			buscaConfigurada = true;
+		}
 
 		ivMap.setOnClickListener(v -> {
 			frm_Principal_pnlPrincipal.__obj.Show();
@@ -164,9 +188,40 @@ public class frm_Principal_pnlFeed extends RvView
 
 	private void reconstruirFeed()
 	{
-		List<Ocorrencia> filtradas = filtrarPorRaio(todasOcorrencias);
+		List<Ocorrencia> filtradas = filtrarPorBusca(filtrarPorRaio(todasOcorrencias));
 		montarDestaques(filtradas);
 		montarRecentes(filtradas);
+	}
+
+	private List<Ocorrencia> filtrarPorBusca(List<Ocorrencia> lista)
+	{
+		if (textoBusca.isEmpty())
+			return lista;
+
+		List<Ocorrencia> filtradas = new ArrayList<>();
+
+		for (Ocorrencia oc : lista)
+			if (correspondeBusca(oc))
+				filtradas.add(oc);
+
+		return filtradas;
+	}
+
+	private boolean correspondeBusca(Ocorrencia oc)
+	{
+		if (oc.titulo != null && oc.titulo.toLowerCase().contains(textoBusca))
+			return true;
+
+		if (oc.descricao != null && oc.descricao.toLowerCase().contains(textoBusca))
+			return true;
+
+		if (oc.bairro != null && oc.bairro.toLowerCase().contains(textoBusca))
+			return true;
+
+		if (oc.categoria != null && rotuloCategoria(oc.categoria).toLowerCase().contains(textoBusca))
+			return true;
+
+		return false;
 	}
 
 	private List<Ocorrencia> filtrarPorRaio(List<Ocorrencia> lista)

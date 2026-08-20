@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -46,6 +48,8 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 	private ListenerRegistration listenerOcorrencias;
 	private List<Ocorrencia> ocorrenciasCarregadas;
 	private boolean mostrarSolucionados = false;
+	private String textoBusca = "";
+	private boolean buscaConfigurada = false;
 
 	@Override
 	public LinearLayout getLayout()
@@ -83,6 +87,26 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			mostrarSolucionados = (checkedId == R.id.rbSolucionados);
 			renderizarMarcadores();
 		});
+
+		if (!buscaConfigurada)
+		{
+			etSearch.addTextChangedListener(new TextWatcher()
+			{
+				@Override
+				public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+				@Override
+				public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+				@Override
+				public void afterTextChanged(Editable s)
+				{
+					textoBusca = s.toString().trim().toLowerCase();
+					renderizarMarcadores();
+				}
+			});
+			buscaConfigurada = true;
+		}
 
 		ivNotification.setOnClickListener(v -> {
 			// Ação da notificação
@@ -184,6 +208,9 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			if (resolvida != mostrarSolucionados)
 				continue;
 
+			if (!textoBusca.isEmpty() && !correspondeBusca(ocorrencia))
+				continue;
+
 			googleMap.addMarker(new MarkerOptions()
 					.position(new LatLng(ocorrencia.latitude, ocorrencia.longitude))
 					.title(ocorrencia.titulo)
@@ -200,6 +227,23 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			listenerOcorrencias.remove();
 			listenerOcorrencias = null;
 		}
+	}
+
+	private boolean correspondeBusca(Ocorrencia ocorrencia)
+	{
+		if (ocorrencia.titulo != null && ocorrencia.titulo.toLowerCase().contains(textoBusca))
+			return true;
+
+		if (ocorrencia.descricao != null && ocorrencia.descricao.toLowerCase().contains(textoBusca))
+			return true;
+
+		if (ocorrencia.bairro != null && ocorrencia.bairro.toLowerCase().contains(textoBusca))
+			return true;
+
+		if (ocorrencia.categoria != null && ocorrencia.categoria.toLowerCase().contains(textoBusca))
+			return true;
+
+		return false;
 	}
 
 	private BitmapDescriptor iconePorCategoria(String categoria)
