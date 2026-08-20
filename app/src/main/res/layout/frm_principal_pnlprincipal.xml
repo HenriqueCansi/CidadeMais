@@ -54,6 +54,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
+                android:checked="true"
                 android:text="Em Discussão"
                 android:textAlignment="center"
                 android:textColor="@drawable/radio_button_text_color" />

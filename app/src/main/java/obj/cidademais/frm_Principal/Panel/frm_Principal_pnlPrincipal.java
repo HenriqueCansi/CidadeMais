@@ -44,6 +44,8 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 	public MapView mapView;
 	private Bundle mapViewBundle;
 	private ListenerRegistration listenerOcorrencias;
+	private List<Ocorrencia> ocorrenciasCarregadas;
+	private boolean mostrarSolucionados = false;
 
 	@Override
 	public LinearLayout getLayout()
@@ -78,7 +80,8 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 
 		RadioGroup rgStatus = layout.findViewById(R.id.rgStatus);
 		rgStatus.setOnCheckedChangeListener((group, checkedId) -> {
-			// Alternar entre "Em discussão" e "Solucionados"
+			mostrarSolucionados = (checkedId == R.id.rbSolucionados);
+			renderizarMarcadores();
 		});
 
 		ivNotification.setOnClickListener(v -> {
@@ -154,19 +157,8 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			@Override
 			public void onSucesso(List<Ocorrencia> lista)
 			{
-				googleMap.clear();
-
-				for (Ocorrencia ocorrencia : lista)
-				{
-					if (ocorrencia.latitude == 0 && ocorrencia.longitude == 0)
-						continue;
-
-					googleMap.addMarker(new MarkerOptions()
-							.position(new LatLng(ocorrencia.latitude, ocorrencia.longitude))
-							.title(ocorrencia.titulo)
-							.snippet(CmConstantes.rotuloStatus(ocorrencia.status) + " • " + ocorrencia.categoria)
-							.icon(iconePorCategoria(ocorrencia.categoria)));
-				}
+				ocorrenciasCarregadas = lista;
+				renderizarMarcadores();
 			}
 
 			@Override
@@ -174,6 +166,30 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			{
 			}
 		});
+	}
+
+	private void renderizarMarcadores()
+	{
+		if (googleMap == null || ocorrenciasCarregadas == null)
+			return;
+
+		googleMap.clear();
+
+		for (Ocorrencia ocorrencia : ocorrenciasCarregadas)
+		{
+			if (ocorrencia.latitude == 0 && ocorrencia.longitude == 0)
+				continue;
+
+			boolean resolvida = CmConstantes.STATUS_RESOLVIDA.equals(ocorrencia.status);
+			if (resolvida != mostrarSolucionados)
+				continue;
+
+			googleMap.addMarker(new MarkerOptions()
+					.position(new LatLng(ocorrencia.latitude, ocorrencia.longitude))
+					.title(ocorrencia.titulo)
+					.snippet(CmConstantes.rotuloStatus(ocorrencia.status) + " • " + ocorrencia.categoria)
+					.icon(iconePorCategoria(ocorrencia.categoria)));
+		}
 	}
 
 	@Override
