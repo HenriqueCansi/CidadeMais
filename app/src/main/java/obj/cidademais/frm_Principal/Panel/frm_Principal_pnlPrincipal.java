@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -168,7 +169,23 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(minhaPosicao, 15f));
 		}
 
+		this.googleMap.setOnInfoWindowClickListener(marker -> {
+			Object tag = marker.getTag();
+			if (tag instanceof Ocorrencia)
+				abrirDetalhe((Ocorrencia) tag);
+		});
+
 		carregarMarcadores();
+	}
+
+	private void abrirDetalhe(Ocorrencia oc)
+	{
+		if (frm_Principal_pnlFeedDetalhe.__obj == null)
+			frm_Principal_pnlFeedDetalhe.__obj = new frm_Principal_pnlFeedDetalhe();
+
+		frm_Principal_pnlFeedDetalhe.__obj.Show();
+		frm_Principal_pnlFeedDetalhe.__obj.exibir(oc);
+		this.Hide();
 	}
 
 	private void carregarMarcadores()
@@ -211,11 +228,14 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			if (!textoBusca.isEmpty() && !correspondeBusca(ocorrencia))
 				continue;
 
-			googleMap.addMarker(new MarkerOptions()
+			Marker marker = googleMap.addMarker(new MarkerOptions()
 					.position(new LatLng(ocorrencia.latitude, ocorrencia.longitude))
 					.title(ocorrencia.titulo)
 					.snippet(CmConstantes.rotuloStatus(ocorrencia.status) + " • " + ocorrencia.categoria)
 					.icon(iconePorCategoria(ocorrencia.categoria)));
+
+			if (marker != null)
+				marker.setTag(ocorrencia);
 		}
 	}
 
