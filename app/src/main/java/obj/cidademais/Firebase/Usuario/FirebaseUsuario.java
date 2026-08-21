@@ -1,8 +1,12 @@
 package obj.cidademais.Firebase.Usuario;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import obj.cidademais.frm_Login.Data.Usuario;
 
@@ -15,6 +19,28 @@ public class FirebaseUsuario
 		void onSucesso();
 
 		void onErro(@NonNull Exception e);
+	}
+
+	public static void cadastrarComFoto(Usuario usuario, Uri foto, Callback callback)
+	{
+		StorageReference ref = FirebaseStorage
+				.getInstance()
+				.getReference("usuarios/" + usuario.uid + ".jpg");
+
+		ref.putFile(foto)
+				.continueWithTask(task -> ref.getDownloadUrl())
+				.addOnSuccessListener(url -> {
+
+					usuario.fotoPerfil = url.toString();
+					salvar(usuario, callback);
+
+				})
+				.addOnFailureListener(e -> {
+
+					if (callback != null)
+						callback.onErro(e);
+
+				});
 	}
 
 	public static void salvar(Usuario usuario, Callback callback)

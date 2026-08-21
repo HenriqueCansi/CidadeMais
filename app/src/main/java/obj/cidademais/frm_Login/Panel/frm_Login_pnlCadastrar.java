@@ -1,5 +1,9 @@
 package obj.cidademais.frm_Login.Panel;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -10,13 +14,20 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmConstantes;
+import obj.cidademais.Core.CmGaleria;
+import obj.cidademais.Core.CmPermissao;
+import obj.cidademais.Core.CmUi;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
@@ -31,6 +42,8 @@ public class frm_Login_pnlCadastrar extends RvView
 	public static frm_Login_pnlCadastrar __obj = new frm_Login_pnlCadastrar();
 	private LinearLayout layout;
 	private FirebaseAuth mAuth;
+	private ImageView imgFotoPerfil;
+	private Uri fotoPerfilSelecionada;
 
 	@Override
 	public LinearLayout getLayout()
@@ -55,8 +68,14 @@ public class frm_Login_pnlCadastrar extends RvView
 		TextView txtJaTenhoCadastro = layout.findViewById(R.id.txtJaTenhoCadastro);
 		ImageButton btnGoogleLogin = layout.findViewById(R.id.btnGoogleLogin);
 		ImageView ivVoltar = layout.findViewById(R.id.ivVoltar);
+		imgFotoPerfil = layout.findViewById(R.id.imgFotoPerfil);
+		TextView tvAdicionarFoto = layout.findViewById(R.id.tvAdicionarFoto);
+		CmUi.arredondar(imgFotoPerfil, 44);
 
 		mAuth = FirebaseAuth.getInstance();
+
+		imgFotoPerfil.setOnClickListener(v -> escolherFotoPerfil());
+		tvAdicionarFoto.setOnClickListener(v -> escolherFotoPerfil());
 
 		btnCadastrar.setOnClickListener(v -> {
 			if (!chkTermos.isChecked())
@@ -72,6 +91,12 @@ public class frm_Login_pnlCadastrar extends RvView
 			if (nome.isEmpty() || email.isEmpty() || senha.isEmpty())
 			{
 				Toast.makeText(RvActivity.__activity, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+			if (fotoPerfilSelecionada == null)
+			{
+				Toast.makeText(RvActivity.__activity, "Adicione uma foto de perfil.", Toast.LENGTH_SHORT).show();
 				return;
 			}
 
@@ -108,6 +133,71 @@ public class frm_Login_pnlCadastrar extends RvView
 		});
 	}
 
+	private void escolherFotoPerfil()
+	{
+		new AlertDialog.Builder(RvActivity.__activity)
+				.setTitle("Foto de perfil")
+				.setItems(new CharSequence[]{"Tirar foto", "Escolher da galeria"}, (dialog, which) -> {
+					if (which == 0)
+						tirarFotoPerfil();
+					else
+						CmGaleria.abrirGaleria(new CmGaleria.Callback()
+						{
+							@Override
+							public void onSucesso(Uri fotoUri)
+							{
+								fotoPerfilSelecionada = fotoUri;
+								imgFotoPerfil.setImageURI(fotoUri);
+							}
+
+							@Override
+							public void onErro(String erro)
+							{
+								Toast.makeText(RvActivity.__activity, erro, Toast.LENGTH_SHORT).show();
+							}
+						});
+				})
+				.show();
+	}
+
+	private void tirarFotoPerfil()
+	{
+		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+		{
+			CmPermissao.solicitarPermissoes(new CmPermissao.Callback()
+			{
+				@Override
+				public void onPermitido()
+				{
+					tirarFotoPerfil();
+				}
+
+				@Override
+				public void onNegado()
+				{
+					Toast.makeText(RvActivity.__activity, "Permissão de câmera negada.", Toast.LENGTH_SHORT).show();
+				}
+			});
+			return;
+		}
+
+		CmCamera.tirarFoto(new CmCamera.Callback()
+		{
+			@Override
+			public void onSucesso(Uri fotoUri)
+			{
+				fotoPerfilSelecionada = fotoUri;
+				imgFotoPerfil.setImageURI(fotoUri);
+			}
+
+			@Override
+			public void onErro(String erro)
+			{
+				Toast.makeText(RvActivity.__activity, erro, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
 	public void criaUsuario(String paNome, String paEmail)
 	{
 
@@ -125,14 +215,13 @@ public class frm_Login_pnlCadastrar extends RvView
 		usuario.nivel = 1;
 
 		usuario.cidade = "";
-		usuario.fotoPerfil = "";
 
 		usuario.ativo = true;
 
 		usuario.criadoEm = Timestamp.now();
 		usuario.ultimoLogin = Timestamp.now();
 
-		FirebaseUsuario.salvar(usuario, new FirebaseUsuario.Callback()
+		FirebaseUsuario.cadastrarComFoto(usuario, fotoPerfilSelecionada, new FirebaseUsuario.Callback()
 		{
 			@Override
 			public void onSucesso()

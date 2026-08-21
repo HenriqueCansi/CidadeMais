@@ -33,6 +33,7 @@ import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Usuario;
+import obj.cidademais.frm_Notificacoes.Panel.frm_Notificacoes_pnlPrincipal;
 import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
@@ -78,11 +79,11 @@ public class frm_Principal_pnlFeed extends RvView
 
 		ImageView ivMap = layout.findViewById(R.id.ivMap);
 		ImageView ivAdd = layout.findViewById(R.id.ivAdd);
+		ImageView ivNotificacoes = layout.findViewById(R.id.ivNotificacoes);
 		ImageView ivProfile = layout.findViewById(R.id.ivProfile);
 
-		ivNotification.setOnClickListener(v -> {
-			// Ação da notificação
-		});
+		ivNotification.setOnClickListener(v -> abrirNotificacoes());
+		ivNotificacoes.setOnClickListener(v -> abrirNotificacoes());
 
 		if (!buscaConfigurada)
 		{
@@ -384,6 +385,15 @@ public class frm_Principal_pnlFeed extends RvView
 
 		frm_Principal_pnlFeedDetalhe.__obj.Show();
 		frm_Principal_pnlFeedDetalhe.__obj.exibir(oc);
+		this.Hide();
+	}
+
+	private void abrirNotificacoes()
+	{
+		if (frm_Notificacoes_pnlPrincipal.__obj == null)
+			frm_Notificacoes_pnlPrincipal.__obj = new frm_Notificacoes_pnlPrincipal();
+
+		frm_Notificacoes_pnlPrincipal.__obj.Show();
 		this.Hide();
 	}
 

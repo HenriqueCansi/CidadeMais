@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,7 +21,11 @@ import obj.cidademais.RvView;
 import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
+import obj.cidademais.frm_Notificacoes.Panel.frm_Notificacoes_pnlPrincipal;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlFeed;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlOcorrencia;
+import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Perfil_pnlPrincipal extends RvView
 {
@@ -81,6 +86,7 @@ public class frm_Perfil_pnlPrincipal extends RvView
 		}
 
 		btnMeusPremios.setOnClickListener(v -> {
+			Toast.makeText(RvActivity.__activity, "Em breve!", Toast.LENGTH_SHORT).show();
 		});
 
 		btnMeusProblemas.setOnClickListener(v -> {
@@ -97,6 +103,47 @@ public class frm_Perfil_pnlPrincipal extends RvView
 			frm_Login_pnlLogin.__obj.Show();
 			Hide();
 
+		});
+
+		ImageView ivFeed = layoutPerfil.findViewById(R.id.ivFeed);
+		ImageView ivMap = layoutPerfil.findViewById(R.id.ivMap);
+		ImageView ivAdd = layoutPerfil.findViewById(R.id.ivAdd);
+		ImageView ivNotificacoes = layoutPerfil.findViewById(R.id.ivNotificacoes);
+		ImageView ivProfile = layoutPerfil.findViewById(R.id.ivProfile);
+
+		ivFeed.setOnClickListener(v -> {
+			if (frm_Principal_pnlFeed.__obj == null)
+				frm_Principal_pnlFeed.__obj = new frm_Principal_pnlFeed();
+
+			frm_Principal_pnlFeed.__obj.Show();
+			Hide();
+		});
+
+		ivMap.setOnClickListener(v -> {
+			frm_Principal_pnlPrincipal.__obj.Show();
+			Hide();
+		});
+
+		ivAdd.setOnClickListener(v -> {
+			if (frm_Principal_pnlOcorrencia.__obj == null)
+				frm_Principal_pnlOcorrencia.__obj = new frm_Principal_pnlOcorrencia();
+
+			frm_Principal_pnlOcorrencia.__obj.Show();
+			frm_Principal_pnlOcorrencia.__obj.ShowCustom();
+			Hide();
+		});
+
+		ivNotificacoes.setOnClickListener(v -> {
+			if (frm_Notificacoes_pnlPrincipal.__obj == null)
+				frm_Notificacoes_pnlPrincipal.__obj = new frm_Notificacoes_pnlPrincipal();
+
+			frm_Notificacoes_pnlPrincipal.__obj.Show();
+			Hide();
+		});
+
+		ivProfile.setOnClickListener(v -> {
+			__obj.Show();
+			Hide();
 		});
 	}
 	public void ShowCustom()

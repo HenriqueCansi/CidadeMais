@@ -144,6 +144,31 @@ public class FirebaseOcorrencia
 		void onErro(Exception e);
 	}
 
+	public interface CallbackBusca
+	{
+		void onSucesso(Ocorrencia ocorrencia);
+
+		void onErro(Exception e);
+	}
+
+	public static void buscarPorId(String id, CallbackBusca callback)
+	{
+		FirebaseFirestore
+				.getInstance()
+				.collection("ocorrencias")
+				.document(id)
+				.get()
+				.addOnSuccessListener(documentSnapshot -> {
+
+					if (documentSnapshot.exists())
+						callback.onSucesso(documentSnapshot.toObject(Ocorrencia.class));
+					else
+						callback.onErro(new Exception("Ocorrência não encontrada."));
+
+				})
+				.addOnFailureListener(callback::onErro);
+	}
+
 	public static void listarTodas(CallbackListagem callback)
 	{
 		FirebaseFirestore

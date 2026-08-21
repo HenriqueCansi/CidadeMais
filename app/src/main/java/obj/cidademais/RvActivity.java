@@ -19,6 +19,7 @@ import com.google.firebase.FirebaseApp;
 import androidx.annotation.NonNull;
 
 import obj.cidademais.Core.CmCamera;
+import obj.cidademais.Core.CmGaleria;
 import obj.cidademais.Core.CmPermissao;
 
 public class RvActivity extends Activity
@@ -168,6 +169,7 @@ public class RvActivity extends Activity
 		super.onActivityResult(requestCode, resultCode, data);
 
 		CmCamera.onActivityResult(requestCode, resultCode);
+		CmGaleria.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override

@@ -40,14 +40,22 @@ export const notificarMudancaStatus = onDocumentUpdated(
     const usuarioSnap = await db.collection("usuarios").doc(uidUsuario).get();
     if (!usuarioSnap.exists) return;
 
-    const fcmToken = usuarioSnap.data()?.fcmToken as string | undefined;
-    if (!fcmToken) {
-      logger.info(`Usuário ${uidUsuario} sem fcmToken — notificação não enviada.`);
-      return;
-    }
-
     const titulo = (depois.titulo as string) ?? "Sua ocorrência";
     const corpo = `"${titulo}" agora está: ${rotuloStatus(depois.status as string)}`;
+
+    await db.collection("notificacoes").add({
+      uidUsuario,
+      ocorrenciaId: event.params.ocorrenciaId,
+      titulo: "Sua ocorrência foi atualizada",
+      corpo,
+      criadoEm: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    const fcmToken = usuarioSnap.data()?.fcmToken as string | undefined;
+    if (!fcmToken) {
+      logger.info(`Usuário ${uidUsuario} sem fcmToken — push não enviado (histórico já registrado).`);
+      return;
+    }
 
     try {
       await messaging.send({

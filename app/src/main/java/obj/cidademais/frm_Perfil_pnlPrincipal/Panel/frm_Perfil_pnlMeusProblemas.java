@@ -24,8 +24,6 @@ import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlFeedDetalhe;
-import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlOcorrencia;
-import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 
 public class frm_Perfil_pnlMeusProblemas extends RvView
 {
@@ -52,36 +50,10 @@ public class frm_Perfil_pnlMeusProblemas extends RvView
 		ivFechar = layout.findViewById(R.id.ivFechar);
 		llLista = layout.findViewById(R.id.llLista);
 		tvVazio = layout.findViewById(R.id.tvVazio);
-		ImageView ivMap = layout.findViewById(R.id.ivMap);
-		ImageView ivAdd = layout.findViewById(R.id.ivAdd);
-		ImageView ivProfile = layout.findViewById(R.id.ivProfile);
 
 		ivFechar.setOnClickListener(v -> {
 			frm_Perfil_pnlPrincipal.__obj.Show();
 			Hide();
-		});
-
-		ivMap.setOnClickListener(v -> {
-			frm_Principal_pnlPrincipal.__obj.Show();
-			this.Hide();
-		});
-
-		ivAdd.setOnClickListener(v -> {
-			if (frm_Principal_pnlOcorrencia.__obj == null)
-				frm_Principal_pnlOcorrencia.__obj = new frm_Principal_pnlOcorrencia();
-
-			frm_Principal_pnlOcorrencia.__obj.Show();
-			frm_Principal_pnlOcorrencia.__obj.ShowCustom();
-			this.Hide();
-		});
-
-		ivProfile.setOnClickListener(v -> {
-			if (frm_Perfil_pnlPrincipal.__obj == null)
-				frm_Perfil_pnlPrincipal.__obj = new frm_Perfil_pnlPrincipal();
-
-			frm_Perfil_pnlPrincipal.__obj.Show();
-			frm_Perfil_pnlPrincipal.__obj.ShowCustom();
-			this.Hide();
 		});
 
 		carregarOcorrencias();

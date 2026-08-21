@@ -35,6 +35,7 @@ import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.R;
 import obj.cidademais.RvActivity;
 import obj.cidademais.RvView;
+import obj.cidademais.frm_Notificacoes.Panel.frm_Notificacoes_pnlPrincipal;
 import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
@@ -81,6 +82,7 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 		ImageView ivFeed = layout.findViewById(R.id.ivFeed);
 		ImageView ivMap = layout.findViewById(R.id.ivMap);
 		ImageView ivAdd = layout.findViewById(R.id.ivAdd);
+		ImageView ivNotificacoes = layout.findViewById(R.id.ivNotificacoes);
 		ImageView ivProfile = layout.findViewById(R.id.ivProfile);
 
 		RadioGroup rgStatus = layout.findViewById(R.id.rgStatus);
@@ -109,13 +111,13 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 			buscaConfigurada = true;
 		}
 
-		ivNotification.setOnClickListener(v -> {
-			// Ação da notificação
-		});
+		ivNotification.setOnClickListener(v -> abrirNotificacoes());
 
 		ivMap.setOnClickListener(v -> {
 			// Ação do mapa
 		});
+
+		ivNotificacoes.setOnClickListener(v -> abrirNotificacoes());
 
 		ivFeed.setOnClickListener(v -> {
 			if (frm_Principal_pnlFeed.__obj == null)
@@ -185,6 +187,15 @@ public class frm_Principal_pnlPrincipal extends RvView implements OnMapReadyCall
 
 		frm_Principal_pnlFeedDetalhe.__obj.Show();
 		frm_Principal_pnlFeedDetalhe.__obj.exibir(oc);
+		this.Hide();
+	}
+
+	private void abrirNotificacoes()
+	{
+		if (frm_Notificacoes_pnlPrincipal.__obj == null)
+			frm_Notificacoes_pnlPrincipal.__obj = new frm_Notificacoes_pnlPrincipal();
+
+		frm_Notificacoes_pnlPrincipal.__obj.Show();
 		this.Hide();
 	}
 
