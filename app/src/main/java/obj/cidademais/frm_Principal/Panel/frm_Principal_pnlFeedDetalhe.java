@@ -229,12 +229,15 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		boolean curtir = !jaCurtiu;
 
 		llCurtir.setEnabled(false);
+		RvActivity.mostrarCarregando("Enviando...");
 
 		FirebaseOcorrencia.alternarCurtida(ocorrenciaAtual.id, uid, curtir, new CallbackCadastro()
 		{
 			@Override
 			public void onSucesso()
 			{
+				RvActivity.esconderCarregando();
+
 				if (ocorrenciaAtual.curtidoPor == null)
 					ocorrenciaAtual.curtidoPor = new ArrayList<>();
 
@@ -256,6 +259,8 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			@Override
 			public void onErro(Exception e)
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
 				llCurtir.setEnabled(true);
 			}
@@ -299,12 +304,15 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		boolean confirmar = !jaConfirmou;
 
 		llConfirmar.setEnabled(false);
+		RvActivity.mostrarCarregando("Enviando...");
 
 		FirebaseOcorrencia.alternarConfirmacao(ocorrenciaAtual.id, uid, confirmar, new CallbackCadastro()
 		{
 			@Override
 			public void onSucesso()
 			{
+				RvActivity.esconderCarregando();
+
 				if (ocorrenciaAtual.confirmadoPor == null)
 					ocorrenciaAtual.confirmadoPor = new ArrayList<>();
 
@@ -326,6 +334,8 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			@Override
 			public void onErro(Exception e)
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
 				llConfirmar.setEnabled(true);
 			}
@@ -338,12 +348,15 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			return;
 
 		llStatusAdmin.setEnabled(false);
+		RvActivity.mostrarCarregando("Atualizando...");
 
 		FirebaseOcorrencia.atualizarStatus(ocorrenciaAtual.id, novoStatus, new CallbackCadastro()
 		{
 			@Override
 			public void onSucesso()
 			{
+				RvActivity.esconderCarregando();
+
 				ocorrenciaAtual.status = novoStatus;
 				tvStatus.setText(CmConstantes.rotuloStatus(novoStatus));
 				tvStatus.getBackground().mutate().setTint(CmConstantes.corStatus(novoStatus));
@@ -356,6 +369,8 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			@Override
 			public void onErro(Exception e)
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
 				llStatusAdmin.setEnabled(true);
 			}

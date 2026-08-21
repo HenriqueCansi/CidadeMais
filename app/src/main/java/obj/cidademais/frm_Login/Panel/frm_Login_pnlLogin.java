@@ -53,11 +53,15 @@ public class frm_Login_pnlLogin extends RvView
 
 			String uid = mAuth.getCurrentUser().getUid();
 
+			RvActivity.mostrarCarregando("Carregando...");
+
 			FirebaseUsuario.buscar(uid, new FirebaseUsuario.CallbackBusca()
 			{
 				@Override
 				public void onSucesso(Usuario usuario)
 				{
+					RvActivity.esconderCarregando();
+
 					Sessao.setUsuario(usuario);
 
 					FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
@@ -70,6 +74,8 @@ public class frm_Login_pnlLogin extends RvView
 				@Override
 				public void onErro(Exception e)
 				{
+					RvActivity.esconderCarregando();
+
 					Toast.makeText(RvActivity.__activity,
 							"Erro ao carregar usuário: " + e.getMessage(),
 							Toast.LENGTH_LONG).show();

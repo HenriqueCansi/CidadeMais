@@ -100,6 +100,8 @@ public class frm_Login_pnlCadastrar extends RvView
 				return;
 			}
 
+			RvActivity.mostrarCarregando("Cadastrando...");
+
 			mAuth.createUserWithEmailAndPassword(email, senha)
 					.addOnCompleteListener(task -> {
 						if (task.isSuccessful())
@@ -109,6 +111,7 @@ public class frm_Login_pnlCadastrar extends RvView
 						}
 						else
 						{
+							RvActivity.esconderCarregando();
 							Toast.makeText(RvActivity.__activity, "Erro ao cadastrar: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
 						}
 					});
@@ -226,6 +229,8 @@ public class frm_Login_pnlCadastrar extends RvView
 			@Override
 			public void onSucesso()
 			{
+				RvActivity.esconderCarregando();
+
 				Sessao.setUsuario(usuario);
 
 				FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
@@ -245,6 +250,8 @@ public class frm_Login_pnlCadastrar extends RvView
 			@Override
 			public void onErro(Exception e)
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity,
 						"Erro ao salvar usuário: " + e.getMessage(),
 						Toast.LENGTH_LONG).show();

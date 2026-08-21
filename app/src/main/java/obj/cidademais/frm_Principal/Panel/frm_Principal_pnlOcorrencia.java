@@ -187,6 +187,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 				return;
 			}
 
+			RvActivity.mostrarCarregando("Enviando...");
+
 			Ocorrencia novaOcorrencia = montarOcorrencia(titulo, descricao);
 			verificarOcorrenciasProximas(novaOcorrencia);
 
@@ -343,10 +345,11 @@ public class frm_Principal_pnlOcorrencia extends RvView
 
 				txtEndereco.setText(posicao.localizacao.endereco);
 
-				txtCidade.setText(
-						posicao.localizacao.bairro + "\n" +
-								posicao.localizacao.cidade + " - " +
-								posicao.localizacao.estado);
+				String bairro = posicao.localizacao.bairro != null ? posicao.localizacao.bairro : "";
+				String cidade = posicao.localizacao.cidade != null ? posicao.localizacao.cidade : "";
+				String estado = posicao.localizacao.estado != null ? posicao.localizacao.estado : "";
+
+				txtCidade.setText(bairro + "\n" + cidade + " - " + estado);
 			}
 
 			@Override
@@ -439,6 +442,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 					return;
 				}
 
+				RvActivity.esconderCarregando();
+
 				if (frm_Principal_pnlOcorrenciaProxima.__obj == null)
 					frm_Principal_pnlOcorrenciaProxima.__obj = new frm_Principal_pnlOcorrenciaProxima();
 
@@ -465,6 +470,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 					@Override
 					public void onSucesso()
 					{
+						RvActivity.esconderCarregando();
+
 						Toast.makeText(
 								RvActivity.__activity,
 								"Ocorrência cadastrada!",
@@ -477,6 +484,8 @@ public class frm_Principal_pnlOcorrencia extends RvView
 					@Override
 					public void onErro(Exception e)
 					{
+						RvActivity.esconderCarregando();
+
 						Toast.makeText(
 								RvActivity.__activity,
 								e.getMessage(),

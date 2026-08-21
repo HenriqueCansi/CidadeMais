@@ -345,7 +345,8 @@
                             android:layout_marginTop="12dp"
                             android:background="@drawable/bg_botao_roxo"
                             android:text="Alterar localização"
-                            android:textColor="#FFFFFF"/>
+                            android:textColor="#FFFFFF"
+                            android:visibility="gone"/>
 
                 </LinearLayout>
 

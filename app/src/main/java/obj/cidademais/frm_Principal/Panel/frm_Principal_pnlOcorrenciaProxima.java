@@ -123,11 +123,15 @@ public class frm_Principal_pnlOcorrenciaProxima extends RvView
 		botao.setEnabled(false);
 		String uid = Sessao.getUsuario().uid;
 
+		RvActivity.mostrarCarregando("Confirmando...");
+
 		FirebaseOcorrencia.alternarConfirmacao(existente.id, uid, true, new CallbackCadastro()
 		{
 			@Override
 			public void onSucesso()
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity,
 						"Confirmação registrada nesse problema.",
 						Toast.LENGTH_SHORT).show();
@@ -138,6 +142,8 @@ public class frm_Principal_pnlOcorrenciaProxima extends RvView
 			@Override
 			public void onErro(Exception e)
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
 				botao.setEnabled(true);
 			}
@@ -158,11 +164,15 @@ public class frm_Principal_pnlOcorrenciaProxima extends RvView
 	{
 		btnCadastrarMesmoAssim.setEnabled(false);
 
+		RvActivity.mostrarCarregando("Enviando...");
+
 		FirebaseOcorrencia.cadastrarComFotos(novaOcorrencia, fotosNovaOcorrencia, new CallbackCadastro()
 		{
 			@Override
 			public void onSucesso()
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity, "Ocorrência cadastrada!", Toast.LENGTH_SHORT).show();
 
 				frm_Principal_pnlPrincipal.__obj.Show();
@@ -172,6 +182,8 @@ public class frm_Principal_pnlOcorrenciaProxima extends RvView
 			@Override
 			public void onErro(Exception e)
 			{
+				RvActivity.esconderCarregando();
+
 				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_LONG).show();
 				btnCadastrarMesmoAssim.setEnabled(true);
 			}

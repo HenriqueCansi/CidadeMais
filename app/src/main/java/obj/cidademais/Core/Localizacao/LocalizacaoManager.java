@@ -89,7 +89,7 @@ public class LocalizacaoManager
 								posicao.localizacao.endereco += ", " + a.getSubThoroughfare();
 
 							posicao.localizacao.bairro = a.getSubLocality();
-							posicao.localizacao.cidade = a.getLocality();
+							posicao.localizacao.cidade = a.getLocality() != null ? a.getLocality() : a.getSubAdminArea();
 							posicao.localizacao.estado = a.getAdminArea();
 						}
 

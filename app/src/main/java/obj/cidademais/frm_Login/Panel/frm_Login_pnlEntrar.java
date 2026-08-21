@@ -58,6 +58,8 @@ public class frm_Login_pnlEntrar extends RvView
 				return;
 			}
 
+			RvActivity.mostrarCarregando("Entrando...");
+
 			mAuth.signInWithEmailAndPassword(email, senha)
 					.addOnCompleteListener(task -> {
 
@@ -70,6 +72,8 @@ public class frm_Login_pnlEntrar extends RvView
 								@Override
 								public void onSucesso(Usuario usuario)
 								{
+									RvActivity.esconderCarregando();
+
 									Sessao.setUsuario(usuario);
 
 									FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
@@ -89,6 +93,8 @@ public class frm_Login_pnlEntrar extends RvView
 								@Override
 								public void onErro(Exception e)
 								{
+									RvActivity.esconderCarregando();
+
 									Toast.makeText(RvActivity.__activity,
 											"Erro ao carregar usuário: " + e.getMessage(),
 											Toast.LENGTH_LONG).show();
@@ -97,6 +103,8 @@ public class frm_Login_pnlEntrar extends RvView
 						}
 						else
 						{
+							RvActivity.esconderCarregando();
+
 							String mensagem = task.getException() != null
 									? task.getException().getMessage()
 									: "Não foi possível entrar.";
