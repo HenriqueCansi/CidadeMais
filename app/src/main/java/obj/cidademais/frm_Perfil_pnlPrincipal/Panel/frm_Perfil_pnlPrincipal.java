@@ -1,6 +1,10 @@
 package obj.cidademais.frm_Perfil_pnlPrincipal.Panel;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -9,10 +13,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
+import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmConstantes;
+import obj.cidademais.Core.CmGaleria;
+import obj.cidademais.Core.CmPermissao;
 import obj.cidademais.Core.CmReputacao;
+import obj.cidademais.Core.CmUi;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
@@ -69,6 +81,8 @@ public class frm_Perfil_pnlPrincipal extends RvView
 		btnMeusProblemas = layoutPerfil.findViewById(R.id.btnMeusProblemas);
 		btnSair = layoutPerfil.findViewById(R.id.btnSair);
 
+		CmUi.arredondar(imgPerfil, 40);
+
 		Usuario usuario = Sessao.getUsuario();
 
 		if (usuario != null)
@@ -76,6 +90,13 @@ public class frm_Perfil_pnlPrincipal extends RvView
 			tvNome.setText(usuario.nome);
 			tvCidade.setText(usuario.cidade);
 			carregarReputacao(usuario);
+
+			if (usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty())
+				Glide.with(RvActivity.__activity).load(usuario.fotoPerfil).into(imgPerfil);
+			else
+				imgPerfil.setImageResource(R.drawable.ic_perfil);
+
+			imgPerfil.setOnClickListener(v -> escolherFotoPerfil(usuario));
 		}
 		else
 		{
@@ -83,6 +104,7 @@ public class frm_Perfil_pnlPrincipal extends RvView
 			tvCidade.setText("");
 			tvPontos.setText("0");
 			tvPremios.setText("0");
+			imgPerfil.setImageResource(R.drawable.ic_perfil);
 		}
 
 		btnMeusPremios.setOnClickListener(v -> {
@@ -148,6 +170,93 @@ public class frm_Perfil_pnlPrincipal extends RvView
 	}
 	public void ShowCustom()
 	{
+	}
+
+	private void escolherFotoPerfil(Usuario usuario)
+	{
+		new AlertDialog.Builder(RvActivity.__activity)
+				.setTitle("Foto de perfil")
+				.setItems(new CharSequence[]{"Tirar foto", "Escolher da galeria"}, (dialog, which) -> {
+					if (which == 0)
+						tirarFotoPerfil(usuario);
+					else
+						CmGaleria.abrirGaleria(new CmGaleria.Callback()
+						{
+							@Override
+							public void onSucesso(Uri fotoUri)
+							{
+								atualizarFotoPerfil(usuario, fotoUri);
+							}
+
+							@Override
+							public void onErro(String erro)
+							{
+								Toast.makeText(RvActivity.__activity, erro, Toast.LENGTH_SHORT).show();
+							}
+						});
+				})
+				.show();
+	}
+
+	private void tirarFotoPerfil(Usuario usuario)
+	{
+		if (ContextCompat.checkSelfPermission(RvActivity.__activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+		{
+			CmPermissao.solicitarPermissoes(new CmPermissao.Callback()
+			{
+				@Override
+				public void onPermitido()
+				{
+					tirarFotoPerfil(usuario);
+				}
+
+				@Override
+				public void onNegado()
+				{
+					Toast.makeText(RvActivity.__activity, "Permissão de câmera negada.", Toast.LENGTH_SHORT).show();
+				}
+			});
+			return;
+		}
+
+		CmCamera.tirarFoto(new CmCamera.Callback()
+		{
+			@Override
+			public void onSucesso(Uri fotoUri)
+			{
+				atualizarFotoPerfil(usuario, fotoUri);
+			}
+
+			@Override
+			public void onErro(String erro)
+			{
+				Toast.makeText(RvActivity.__activity, erro, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+	private void atualizarFotoPerfil(Usuario usuario, Uri fotoUri)
+	{
+		RvActivity.mostrarCarregando("Atualizando foto...");
+
+		FirebaseUsuario.cadastrarComFoto(usuario, fotoUri, new FirebaseUsuario.Callback()
+		{
+			@Override
+			public void onSucesso()
+			{
+				RvActivity.esconderCarregando();
+
+				Glide.with(RvActivity.__activity).load(usuario.fotoPerfil).into(imgPerfil);
+				Toast.makeText(RvActivity.__activity, "Foto de perfil atualizada!", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				RvActivity.esconderCarregando();
+				Toast.makeText(RvActivity.__activity, "Erro ao atualizar foto: " + e.getMessage(), Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 
 	private void carregarReputacao(Usuario usuario)

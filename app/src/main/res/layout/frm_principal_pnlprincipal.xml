@@ -27,7 +27,8 @@
             android:layout_height="32dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_sino" />
+            android:src="@drawable/ic_sino"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <!-- Filtros -->

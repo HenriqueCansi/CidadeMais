@@ -48,6 +48,7 @@ dependencies {
     implementation ("androidx.security:security-crypto:1.1.0-alpha06")
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.auth)
     implementation(libs.support.annotations)
     implementation(libs.firebase.common)
     //implementation("com.google.firebase:firebase-auth:22.3.0")

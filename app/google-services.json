@@ -12,7 +12,20 @@
           "package_name": "obj.cidademais"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "151112082559-as9qbu8ebanv04so9h48s7h18u73dg6k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "obj.cidademais",
+            "certificate_hash": "a13bb7add6ec7fb1d96db76018c7216648d863fe"
+          }
+        },
+        {
+          "client_id": "151112082559-c7gk9dpgr1t4cmjhec4fh4mrv5ptt7qk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAJl4_niY32JUgb5oiH7-qP71jNWa8Kx5Y"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151112082559-c7gk9dpgr1t4cmjhec4fh4mrv5ptt7qk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -48,8 +48,11 @@
     <!-- Botão Google -->
     <ImageButton
         android:id="@+id/btnGoogleLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_google"
+        android:scaleType="fitCenter"
+        android:padding="8dp"
         android:background="@android:color/transparent"
         android:contentDescription="Entrar com Google"
         android:layout_marginBottom="16dp" />

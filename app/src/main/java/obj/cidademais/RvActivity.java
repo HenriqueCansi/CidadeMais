@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 
 import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmGaleria;
+import obj.cidademais.Core.CmGoogleAuth;
 import obj.cidademais.Core.CmPermissao;
 
 public class RvActivity extends Activity
@@ -170,6 +171,7 @@ public class RvActivity extends Activity
 
 		CmCamera.onActivityResult(requestCode, resultCode);
 		CmGaleria.onActivityResult(requestCode, resultCode, data);
+		CmGoogleAuth.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override

@@ -20,12 +20,16 @@ import androidx.core.content.ContextCompat;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import obj.cidademais.Core.CmCamera;
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmGaleria;
+import obj.cidademais.Core.CmGoogleAuth;
 import obj.cidademais.Core.CmPermissao;
 import obj.cidademais.Core.CmUi;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
@@ -124,7 +128,61 @@ public class frm_Login_pnlCadastrar extends RvView
 		});
 
 		btnGoogleLogin.setOnClickListener(v -> {
-			Toast.makeText(RvActivity.__activity, "Login com Google ainda não implementado", Toast.LENGTH_SHORT).show();
+			RvActivity.mostrarCarregando("Conectando ao Google...");
+
+			CmGoogleAuth.entrar(new CmGoogleAuth.Callback()
+			{
+				@Override
+				public void onSucesso(String idToken)
+				{
+					AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+
+					mAuth.signInWithCredential(credential).addOnCompleteListener(task -> {
+						if (!task.isSuccessful())
+						{
+							RvActivity.esconderCarregando();
+							String mensagem = task.getException() != null ? task.getException().getMessage() : "Não foi possível entrar.";
+							Toast.makeText(RvActivity.__activity, "Erro ao entrar com Google: " + mensagem, Toast.LENGTH_LONG).show();
+							return;
+						}
+
+						String uid = mAuth.getCurrentUser().getUid();
+
+						FirebaseUsuario.buscar(uid, new FirebaseUsuario.CallbackBusca()
+						{
+							@Override
+							public void onSucesso(Usuario usuario)
+							{
+								RvActivity.esconderCarregando();
+
+								Sessao.setUsuario(usuario);
+
+								FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
+										FirebaseUsuario.atualizarToken(usuario.uid, token, null));
+
+								if (frm_Principal_pnlPrincipal.__obj == null)
+									frm_Principal_pnlPrincipal.__obj = new frm_Principal_pnlPrincipal();
+
+								frm_Principal_pnlPrincipal.__obj.Show();
+								Hide();
+							}
+
+							@Override
+							public void onErro(Exception e)
+							{
+								criaUsuarioGoogle();
+							}
+						});
+					});
+				}
+
+				@Override
+				public void onErro(String erro)
+				{
+					RvActivity.esconderCarregando();
+					Toast.makeText(RvActivity.__activity, erro, Toast.LENGTH_SHORT).show();
+				}
+			});
 		});
 
 		ivVoltar.setOnClickListener(v -> {
@@ -260,5 +318,63 @@ public class frm_Login_pnlCadastrar extends RvView
 		});
 
 
+	}
+
+	private void criaUsuarioGoogle()
+	{
+		FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+		Usuario usuario = new Usuario();
+
+		usuario.uid = firebaseUser.getUid();
+		usuario.nome = firebaseUser.getDisplayName() != null ? firebaseUser.getDisplayName() : "";
+		usuario.email = firebaseUser.getEmail() != null ? firebaseUser.getEmail() : "";
+		usuario.fotoPerfil = firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "";
+
+		usuario.tipoUsuario = CmConstantes.TIPO_USUARIO_USER;
+
+		usuario.reputacao = 0;
+		usuario.nivel = 1;
+
+		usuario.cidade = "";
+
+		usuario.ativo = true;
+
+		usuario.criadoEm = Timestamp.now();
+		usuario.ultimoLogin = Timestamp.now();
+
+		FirebaseUsuario.salvar(usuario, new FirebaseUsuario.Callback()
+		{
+			@Override
+			public void onSucesso()
+			{
+				RvActivity.esconderCarregando();
+
+				Sessao.setUsuario(usuario);
+
+				FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token ->
+						FirebaseUsuario.atualizarToken(usuario.uid, token, null));
+
+				Toast.makeText(RvActivity.__activity,
+						"Cadastro realizado com sucesso!",
+						Toast.LENGTH_SHORT).show();
+
+				if (frm_Principal_pnlPrincipal.__obj == null)
+					frm_Principal_pnlPrincipal.__obj = new frm_Principal_pnlPrincipal();
+
+				frm_Principal_pnlPrincipal.__obj.Show();
+				Hide();
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				RvActivity.esconderCarregando();
+
+				Toast.makeText(RvActivity.__activity,
+						"Erro ao salvar usuário: " + e.getMessage(),
+						Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 }
