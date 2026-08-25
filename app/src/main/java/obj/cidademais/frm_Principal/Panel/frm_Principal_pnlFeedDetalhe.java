@@ -35,6 +35,8 @@ import obj.cidademais.frm_Login.Classe.CallbackCadastro;
 import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
+import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPerfilPublico;
+import obj.cidademais.frm_Perfil_pnlPrincipal.Panel.frm_Perfil_pnlPrincipal;
 import obj.cidademais.frm_Principal.Data.Comentario;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
@@ -225,6 +227,9 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 
 				if (usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty())
 					Glide.with(RvActivity.__activity).load(usuario.fotoPerfil).into(imgAvatar);
+
+				tvNomePoster.setOnClickListener(v -> abrirPerfilPublico(usuario));
+				imgAvatar.setOnClickListener(v -> abrirPerfilPublico(usuario));
 			}
 
 			@Override
@@ -439,6 +444,27 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			chipAberta.setBackgroundResource(R.drawable.bg_categoria_selecionada);
 	}
 
+	private void abrirPerfilPublico(Usuario usuario)
+	{
+		if (usuario == null)
+			return;
+
+		if (Sessao.isLogado() && usuario.uid.equals(Sessao.getUsuario().uid))
+		{
+			frm_Perfil_pnlPrincipal.__obj.Show();
+			frm_Perfil_pnlPrincipal.__obj.ShowCustom();
+			this.Hide();
+			return;
+		}
+
+		if (frm_Perfil_pnlPerfilPublico.__obj == null)
+			frm_Perfil_pnlPerfilPublico.__obj = new frm_Perfil_pnlPerfilPublico();
+
+		frm_Perfil_pnlPerfilPublico.__obj.Show();
+		frm_Perfil_pnlPerfilPublico.__obj.exibir(usuario);
+		this.Hide();
+	}
+
 	private void carregarComentarios()
 	{
 		if (ocorrenciaAtual == null)
@@ -503,6 +529,9 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 
 			if (usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty())
 				Glide.with(RvActivity.__activity).load(usuario.fotoPerfil).into(imgAvatarComentario);
+
+			tvNomeComentario.setOnClickListener(v -> abrirPerfilPublico(usuario));
+			imgAvatarComentario.setOnClickListener(v -> abrirPerfilPublico(usuario));
 
 		});
 
