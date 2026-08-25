@@ -44,6 +44,7 @@ public class frm_Login_pnlEntrar extends RvView
 		EditText edtSenha = layout.findViewById(R.id.edtSenha);
 		Button btnEntrar = layout.findViewById(R.id.btnEntrar);
 		TextView txtNaoTenhoCadastro = layout.findViewById(R.id.tvCadastrarAgora);
+		TextView tvEsqueceuSenha = layout.findViewById(R.id.tvEsqueceuSenha);
 		ImageView ivVoltar = layout.findViewById(R.id.ivVoltar);
 
 		mAuth = FirebaseAuth.getInstance();
@@ -120,6 +121,41 @@ public class frm_Login_pnlEntrar extends RvView
 		txtNaoTenhoCadastro.setOnClickListener(v -> {
 			frm_Login_pnlCadastrar.__obj.Show();
 			this.Hide();
+		});
+
+		tvEsqueceuSenha.setOnClickListener(v -> {
+			String email = edtEmail.getText().toString();
+
+			if (email.isEmpty())
+			{
+				Toast.makeText(RvActivity.__activity, "Digite seu e-mail para redefinir a senha", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+			RvActivity.mostrarCarregando("Enviando...");
+
+			mAuth.sendPasswordResetEmail(email)
+					.addOnCompleteListener(task -> {
+
+						RvActivity.esconderCarregando();
+
+						if (task.isSuccessful())
+						{
+							Toast.makeText(RvActivity.__activity,
+									"E-mail de redefinição enviado! Confira sua caixa de entrada.",
+									Toast.LENGTH_LONG).show();
+						}
+						else
+						{
+							String mensagem = task.getException() != null
+									? task.getException().getMessage()
+									: "Não foi possível enviar o e-mail.";
+
+							Toast.makeText(RvActivity.__activity,
+									"Erro ao enviar e-mail: " + mensagem,
+									Toast.LENGTH_LONG).show();
+						}
+					});
 		});
 
 		ivVoltar.setOnClickListener(v -> {

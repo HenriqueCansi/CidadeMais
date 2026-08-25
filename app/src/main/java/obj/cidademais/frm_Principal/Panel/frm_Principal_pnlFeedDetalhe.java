@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,13 +12,20 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import obj.cidademais.Core.CmConstantes;
 import obj.cidademais.Core.CmData;
 import obj.cidademais.Core.CmUi;
+import obj.cidademais.Firebase.Comentario.FirebaseComentario;
 import obj.cidademais.Firebase.Ocorrencia.FirebaseOcorrencia;
 import obj.cidademais.Firebase.Usuario.FirebaseUsuario;
 import obj.cidademais.R;
@@ -27,6 +35,7 @@ import obj.cidademais.frm_Login.Classe.CallbackCadastro;
 import obj.cidademais.frm_Login.Data.Sessao;
 import obj.cidademais.frm_Login.Data.Usuario;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
+import obj.cidademais.frm_Principal.Data.Comentario;
 import obj.cidademais.frm_Principal.Data.Ocorrencia;
 
 public class frm_Principal_pnlFeedDetalhe extends RvView
@@ -57,6 +66,20 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 	private LinearLayout chipEncaminhada;
 	private LinearLayout chipResolvida;
 	private Button btnVerNoMapa;
+
+	private TextView tvTituloComentarios;
+	private LinearLayout llComentarios;
+	private TextView tvSemComentarios;
+	private EditText edtComentario;
+	private Button btnEnviarComentario;
+
+	private ListenerRegistration listenerComentarios;
+	private Map<String, Usuario> cacheUsuariosComentario = new HashMap<>();
+
+	private interface UsuarioCallback
+	{
+		void onUsuario(Usuario usuario);
+	}
 
 	@Override
 	public LinearLayout getLayout()
@@ -100,6 +123,12 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		chipEncaminhada = layout.findViewById(R.id.chipEncaminhada);
 		chipResolvida = layout.findViewById(R.id.chipResolvida);
 
+		tvTituloComentarios = layout.findViewById(R.id.tvTituloComentarios);
+		llComentarios = layout.findViewById(R.id.llComentarios);
+		tvSemComentarios = layout.findViewById(R.id.tvSemComentarios);
+		edtComentario = layout.findViewById(R.id.edtComentario);
+		btnEnviarComentario = layout.findViewById(R.id.btnEnviarComentario);
+
 		carregarDados();
 
 		ivFechar.setOnClickListener(v -> {
@@ -122,6 +151,20 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 		chipEmAnalise.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_EM_ANALISE));
 		chipEncaminhada.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_ENCAMINHADA));
 		chipResolvida.setOnClickListener(v -> alterarStatus(CmConstantes.STATUS_RESOLVIDA));
+
+		btnEnviarComentario.setOnClickListener(v -> enviarComentario());
+
+		carregarComentarios();
+	}
+
+	@Override
+	public void OnDisabled()
+	{
+		if (listenerComentarios != null)
+		{
+			listenerComentarios.remove();
+			listenerComentarios = null;
+		}
 	}
 
 	private void carregarDados()
@@ -394,6 +437,154 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 			chipResolvida.setBackgroundResource(R.drawable.bg_categoria_selecionada);
 		else
 			chipAberta.setBackgroundResource(R.drawable.bg_categoria_selecionada);
+	}
+
+	private void carregarComentarios()
+	{
+		if (ocorrenciaAtual == null)
+			return;
+
+		listenerComentarios = FirebaseComentario.observarPorOcorrencia(ocorrenciaAtual.id, new FirebaseComentario.CallbackListagem()
+		{
+			@Override
+			public void onSucesso(List<Comentario> lista)
+			{
+				montarListaComentarios(lista);
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+
+	private void montarListaComentarios(List<Comentario> lista)
+	{
+		List<Comentario> ordenados = new ArrayList<>(lista);
+		Collections.sort(ordenados, (a, b) -> {
+			if (a.criadoEm == null || b.criadoEm == null)
+				return 0;
+			return a.criadoEm.compareTo(b.criadoEm);
+		});
+
+		llComentarios.removeAllViews();
+		tvSemComentarios.setVisibility(ordenados.isEmpty() ? View.VISIBLE : View.GONE);
+		tvTituloComentarios.setText("Comentários (" + ordenados.size() + ")");
+
+		for (Comentario comentario : ordenados)
+			llComentarios.addView(criarCardComentario(comentario));
+	}
+
+	private View criarCardComentario(Comentario comentario)
+	{
+		LayoutInflater inflater = LayoutInflater.from(RvActivity.__activity);
+		View card = inflater.inflate(R.layout.item_comentario, llComentarios, false);
+
+		ImageView imgAvatarComentario = card.findViewById(R.id.imgAvatarComentario);
+		TextView tvNomeComentario = card.findViewById(R.id.tvNomeComentario);
+		TextView tvTempoComentario = card.findViewById(R.id.tvTempoComentario);
+		TextView tvTextoComentario = card.findViewById(R.id.tvTextoComentario);
+
+		CmUi.arredondar(imgAvatarComentario, 18);
+		tvTempoComentario.setText(CmData.tempoRelativo(comentario.criadoEm));
+		tvTextoComentario.setText(comentario.texto);
+
+		resolverUsuarioComentario(comentario.uidUsuario, usuario -> {
+
+			if (usuario == null)
+			{
+				tvNomeComentario.setText("Usuário");
+				return;
+			}
+
+			tvNomeComentario.setText(usuario.nome);
+
+			if (usuario.fotoPerfil != null && !usuario.fotoPerfil.isEmpty())
+				Glide.with(RvActivity.__activity).load(usuario.fotoPerfil).into(imgAvatarComentario);
+
+		});
+
+		return card;
+	}
+
+	private void resolverUsuarioComentario(String uid, UsuarioCallback callback)
+	{
+		if (cacheUsuariosComentario.containsKey(uid))
+		{
+			callback.onUsuario(cacheUsuariosComentario.get(uid));
+			return;
+		}
+
+		FirebaseUsuario.buscar(uid, new FirebaseUsuario.CallbackBusca()
+		{
+			@Override
+			public void onSucesso(Usuario usuario)
+			{
+				cacheUsuariosComentario.put(uid, usuario);
+				callback.onUsuario(usuario);
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				callback.onUsuario(null);
+			}
+		});
+	}
+
+	private void enviarComentario()
+	{
+		if (!Sessao.isLogado())
+		{
+			Toast.makeText(RvActivity.__activity,
+					"Faça login para comentar em uma ocorrência.",
+					Toast.LENGTH_LONG).show();
+
+			if (frm_Login_pnlLogin.__obj == null)
+				frm_Login_pnlLogin.__obj = new frm_Login_pnlLogin();
+
+			frm_Login_pnlLogin.__obj.Show();
+			this.Hide();
+			return;
+		}
+
+		String texto = edtComentario.getText().toString().trim();
+
+		if (texto.isEmpty())
+			return;
+
+		Comentario comentario = new Comentario();
+		comentario.ocorrenciaId = ocorrenciaAtual.id;
+		comentario.uidUsuario = Sessao.getUsuario().uid;
+		comentario.texto = texto;
+		comentario.criadoEm = Timestamp.now();
+
+		btnEnviarComentario.setEnabled(false);
+		RvActivity.mostrarCarregando("Enviando...");
+
+		FirebaseComentario.adicionar(comentario, new CallbackCadastro()
+		{
+			@Override
+			public void onSucesso()
+			{
+				RvActivity.esconderCarregando();
+
+				ocorrenciaAtual.comentarios++;
+				edtComentario.setText("");
+				btnEnviarComentario.setEnabled(true);
+			}
+
+			@Override
+			public void onErro(Exception e)
+			{
+				RvActivity.esconderCarregando();
+
+				Toast.makeText(RvActivity.__activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+				btnEnviarComentario.setEnabled(true);
+			}
+		});
 	}
 
 	private String rotuloCategoria(String categoria)
