@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/yellow"
+    android:padding="24dp">
+
+    <!-- Ícone -->
+    <ImageView
+        android:id="@+id/ivIconePermissao"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/ic_mega_phone"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Permissão de localização necessária"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/purple"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Mensagem -->
+    <TextView
+        android:id="@+id/txtMensagem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="O CidadeMais precisa da sua localização para mostrar e registrar ocorrências perto de você. Conceda a permissão para continuar."
+        android:textSize="16sp"
+        android:textColor="@color/purple"
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Botão Conceder permissão -->
+    <Button
+        android:id="@+id/btnConcederPermissao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Conceder permissão"
+        android:textSize="18sp"
+        android:background="@drawable/button_purple"
+        android:textColor="@color/white"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Botão Abrir configurações (só aparece quando negado permanentemente) -->
+    <Button
+        android:id="@+id/btnAbrirConfiguracoes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Abrir configurações do app"
+        android:textSize="16sp"
+        android:background="@drawable/button_outline"
+        android:textColor="@color/purple"
+        android:padding="12dp"
+        android:visibility="gone"/>
+
+</LinearLayout>

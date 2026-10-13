@@ -1,6 +1,7 @@
 package obj.cidademais.Core;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -9,6 +10,7 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
+import obj.cidademais.Core.Localizacao.PermissaoManager;
 import obj.cidademais.RvActivity;
 
 public class CmPermissao
@@ -23,6 +25,9 @@ public class CmPermissao
 	public static final int REQUEST_LOCALIZACAO = 100;
 	public static final int REQUEST_CAMERA = 101;
 	public static final int REQUEST_GALERIA = 102;
+
+	private static final String PREFS_NOME = "cm_permissoes";
+	private static final String PREF_LOCALIZACAO_SOLICITADA = "localizacao_solicitada";
 
 	private static Callback callbackAtual;
 
@@ -39,6 +44,8 @@ public class CmPermissao
 			return;
 		}
 
+		marcarLocalizacaoSolicitada();
+
 		ActivityCompat.requestPermissions(
 				RvActivity.__activity,
 				new String[]{
@@ -48,11 +55,35 @@ public class CmPermissao
 				REQUEST_LOCALIZACAO);
 	}
 
+	private static void marcarLocalizacaoSolicitada()
+	{
+		RvActivity.__activity
+				.getSharedPreferences(PREFS_NOME, Context.MODE_PRIVATE)
+				.edit()
+				.putBoolean(PREF_LOCALIZACAO_SOLICITADA, true)
+				.apply();
+	}
+
+	public static boolean isLocalizacaoNegadaPermanentemente()
+	{
+		boolean jaSolicitou = RvActivity.__activity
+				.getSharedPreferences(PREFS_NOME, Context.MODE_PRIVATE)
+				.getBoolean(PREF_LOCALIZACAO_SOLICITADA, false);
+
+		boolean semPermissao = !PermissaoManager.possuiPermissaoLocalizacao();
+
+		boolean podeMostrarRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+				RvActivity.__activity,
+				Manifest.permission.ACCESS_FINE_LOCATION);
+
+		return jaSolicitou && semPermissao && !podeMostrarRationale;
+	}
+
 	public static void onRequestPermissionsResult(
 			int requestCode,
 			int[] grantResults)
 	{
-		if (requestCode != REQUEST_PERMISSOES)
+		if (requestCode != REQUEST_PERMISSOES && requestCode != REQUEST_LOCALIZACAO)
 			return;
 
 		if (callbackAtual == null)
@@ -126,6 +157,12 @@ public class CmPermissao
 		}
 		else
 		{
+			if (permissoes.contains(Manifest.permission.ACCESS_FINE_LOCATION) ||
+				permissoes.contains(Manifest.permission.ACCESS_COARSE_LOCATION))
+			{
+				marcarLocalizacaoSolicitada();
+			}
+
 			ActivityCompat.requestPermissions(
 					RvActivity.__activity,
 					permissoes.toArray(new String[0]),

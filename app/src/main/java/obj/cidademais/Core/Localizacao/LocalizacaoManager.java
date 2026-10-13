@@ -65,36 +65,9 @@ public class LocalizacaoManager
 						return;
 					}
 
-					CmPosicao posicao = new CmPosicao();
-
-					posicao.latitude = location.getLatitude();
-					posicao.longitude = location.getLongitude();
-
 					try
 					{
-						Geocoder geocoder = new Geocoder(RvActivity.__activity, new Locale("pt", "BR"));
-
-						List<Address> lista = geocoder.getFromLocation(
-								posicao.latitude,
-								posicao.longitude,
-								1);
-
-						if (lista != null && !lista.isEmpty())
-						{
-							Address a = lista.get(0);
-
-							posicao.localizacao.endereco = a.getThoroughfare();
-
-							if (a.getSubThoroughfare() != null)
-								posicao.localizacao.endereco += ", " + a.getSubThoroughfare();
-
-							posicao.localizacao.bairro = a.getSubLocality();
-							posicao.localizacao.cidade = a.getLocality() != null ? a.getLocality() : a.getSubAdminArea();
-							posicao.localizacao.estado = a.getAdminArea();
-						}
-
-						callback.onSucesso(posicao);
-
+						callback.onSucesso(geocodificar(location.getLatitude(), location.getLongitude()));
 					}
 					catch (IOException e)
 					{
@@ -103,6 +76,36 @@ public class LocalizacaoManager
 
 				})
 				.addOnFailureListener(e -> callback.onErro(e.getMessage()));
+	}
+
+	// Monta um CmPosicao para as coordenadas informadas, preenchendo o endereço via Geocoder (pt-BR).
+	// Usado tanto pela localização do GPS quanto por um ponto escolhido manualmente no mapa.
+	public static CmPosicao geocodificar(double latitude, double longitude) throws IOException
+	{
+		CmPosicao posicao = new CmPosicao();
+
+		posicao.latitude = latitude;
+		posicao.longitude = longitude;
+
+		Geocoder geocoder = new Geocoder(RvActivity.__activity, new Locale("pt", "BR"));
+
+		List<Address> lista = geocoder.getFromLocation(latitude, longitude, 1);
+
+		if (lista != null && !lista.isEmpty())
+		{
+			Address a = lista.get(0);
+
+			posicao.localizacao.endereco = a.getThoroughfare();
+
+			if (a.getSubThoroughfare() != null)
+				posicao.localizacao.endereco += ", " + a.getSubThoroughfare();
+
+			posicao.localizacao.bairro = a.getSubLocality();
+			posicao.localizacao.cidade = a.getLocality() != null ? a.getLocality() : a.getSubAdminArea();
+			posicao.localizacao.estado = a.getAdminArea();
+		}
+
+		return posicao;
 	}
 
 }

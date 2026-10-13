@@ -19,3 +19,8 @@ functions/node_modules
 functions/lib
 firebase-debug.log
 .firebase
+
+# Assinatura de release (segredos locais, nunca versionar)
+app/keystore.properties
+*.jks
+*.keystore

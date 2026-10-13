@@ -16,21 +16,22 @@
         android:layout_marginBottom="16dp"/>
 
     <!-- Título -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_cidademais"
-        android:src="@drawable/ic_mega_phone"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:textColor="@color/purple"
-        android:shadowColor="@color/black"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="2"
-        android:layout_marginBottom="16dp"/>
 
     <!-- Descrição -->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_cidademais"
+            android:src="@drawable/ic_mega_phone"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:layout_marginBottom="16dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

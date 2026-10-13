@@ -305,6 +305,17 @@
                         android:text="Adicionar Foto"
                         android:textColor="#FFFFFF"/>
 
+                <!-- Somente admin (usado para testes): visibilidade controlada no código -->
+                <Button
+                        android:id="@+id/btnEscolherGaleria"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_botao_roxo"
+                        android:text="Escolher da Galeria"
+                        android:textColor="#FFFFFF"
+                        android:visibility="gone"/>
+
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

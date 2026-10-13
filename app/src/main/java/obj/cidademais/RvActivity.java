@@ -14,6 +14,7 @@ import obj.cidademais.Core.Localizacao.CmPosicao;
 import obj.cidademais.Core.Localizacao.LocalizacaoManager;
 import obj.cidademais.Core.Localizacao.PermissaoManager;
 import obj.cidademais.frm_Login.Panel.frm_Login_pnlLogin;
+import obj.cidademais.frm_Permissao.Panel.frm_Permissao_pnlBloqueio;
 import obj.cidademais.frm_Principal.Panel.frm_Principal_pnlPrincipal;
 import com.google.firebase.FirebaseApp;
 import androidx.annotation.NonNull;
@@ -43,22 +44,34 @@ public class RvActivity extends Activity
 			@Override
 			public void onPermitido()
 			{
-				buscarLocalizacaoInicial();
-				frm_Login_pnlLogin.__obj.Show();
+				avaliarPermissaoLocalizacao();
 			}
 
 			@Override
 			public void onNegado()
 			{
-				// Mesmo que negue outras (câmera, mídia, notificações), a localização
-				// tem permissão própria — buscamos independente do resultado das demais.
-				buscarLocalizacaoInicial();
-				frm_Login_pnlLogin.__obj.Show();
+				// O lote de permissões inclui câmera/mídia/notificações além da
+				// localização — só a localização deve bloquear a entrada no app.
+				avaliarPermissaoLocalizacao();
 			}
 		});
 	}
 
-	private void buscarLocalizacaoInicial()
+	private static void avaliarPermissaoLocalizacao()
+	{
+		if (PermissaoManager.possuiPermissaoLocalizacao())
+			prosseguirParaApp();
+		else
+			frm_Permissao_pnlBloqueio.__obj.Show();
+	}
+
+	public static void prosseguirParaApp()
+	{
+		buscarLocalizacaoInicial();
+		frm_Login_pnlLogin.__obj.Show();
+	}
+
+	private static void buscarLocalizacaoInicial()
 	{
 		if (!PermissaoManager.possuiPermissaoLocalizacao())
 			return;
@@ -122,6 +135,9 @@ public class RvActivity extends Activity
 
 		if (frm_Principal_pnlPrincipal.__obj.mapView != null)
 			frm_Principal_pnlPrincipal.__obj.mapView.onResume();
+
+		if (!__views.isEmpty())
+			__views.get(__views.size() - 1).onResume();
 	}
 
 	@Override
