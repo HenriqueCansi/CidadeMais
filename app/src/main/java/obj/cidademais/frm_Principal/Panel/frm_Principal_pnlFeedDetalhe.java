@@ -206,6 +206,8 @@ public class frm_Principal_pnlFeedDetalhe extends RvView
 
 				Glide.with(RvActivity.__activity).load(url).into(iv);
 
+				iv.setOnClickListener(v -> CmUi.mostrarImagemTelaCheia(url));
+
 				llFotos.addView(iv);
 			}
 
